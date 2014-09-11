@@ -2,18 +2,20 @@
           package="fr.xgouchet.nativesandbox">
 
     <application
-        android:allowBackup="true"
-        android:label="@string/app_name"
-        android:icon="@drawable/ic_launcher"
-        android:theme="@style/AppTheme">
+            android:allowBackup="true"
+            android:label="@string/app_name"
+            android:icon="@drawable/ic_launcher"
+            android:theme="@style/AppTheme">
 
         <!-- Native activity -->
         <activity
-            android:name="android.app.NativeActivity"
-            android:label="@string/app_name">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="nativesandbox"/>
+                android:name="android.app.NativeActivity"
+                android:label="@string/app_name">
+
+            <!-- Set the library entry point -->
+
+            <meta-data android:name="android.app.lib_name" android:value="nativesandbox"/>
+
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
