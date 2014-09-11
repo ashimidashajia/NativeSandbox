@@ -1,6 +1,6 @@
 
-#ifndef NATIVE_SANDBOX_H_
-#define NATIVE_SANDBOX_H_
+#ifndef ANDROID_MAIN_H_
+#define ANDROID_MAIN_H_
 
 #include <jni.h>
 

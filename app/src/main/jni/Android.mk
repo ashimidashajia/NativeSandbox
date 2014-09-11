@@ -21,14 +21,14 @@ include $(CLEAR_VARS)
 
 # setup the source files
 LOCAL_SRC_FILES := AndroidMain.cpp
-# LOCAL_SRC_FILES += file.cpp
+LOCAL_SRC_FILES += opengl/GLEngine.cpp
 
 # configure the module
 LOCAL_PATH := $(TOP_LOCAL_PATH)
 LOCAL_MODULE    := nativesandbox
 
 # libs dependencies
-LOCAL_LDLIBS    := -landroid -llog
+LOCAL_LDLIBS    := -landroid -llog -lEGL -lGLESv2
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
 
 # Version dependant configuration

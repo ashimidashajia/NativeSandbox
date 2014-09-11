@@ -2,6 +2,8 @@
 
 #include "AndroidMain.h"
 #include "utils/Logs.h"
+#include "opengl/GLEngine.h"
+#include "core/SavedState.h"
 
 
 // TODO Write a JNI_OnLoad mapping method
@@ -16,21 +18,43 @@ extern "C" {
 static void handle_app_cmd(struct android_app *app, int32_t command) {
     LOG_D(TAG, " ❯ handle_app_cmd(app, command=%d)", command);
 
+    GLEngine *engine = (GLEngine *) app->userData;
+
     switch (command) {
-        case APP_CMD_INPUT_CHANGED:
-            break;
+
         case APP_CMD_INIT_WINDOW:
+            // The window is being initialised, set it up
+            if (app->window != NULL) {
+                engine->init_display(app->window);
+                engine->draw_frame();
+            }
             break;
+
+        case APP_CMD_SAVE_STATE:
+            // TODO save current state
+            // app->savedState =  malloc(sizeof(...));
+            // app->savedStateSize = ... ;
+            break;
+
+
         case APP_CMD_TERM_WINDOW:
+            // The window is being closed, release everything
+            engine->terminate_display();
             break;
+
+
         case APP_CMD_WINDOW_RESIZED:
-            break;
         case APP_CMD_WINDOW_REDRAW_NEEDED:
-            break;
         case APP_CMD_CONTENT_RECT_CHANGED:
+        case APP_CMD_GAINED_FOCUS:
+        case APP_CMD_LOST_FOCUS:
+        case APP_CMD_CONFIG_CHANGED:
+        case APP_CMD_LOW_MEMORY:
+        case APP_CMD_START:
+        case APP_CMD_RESUME:
+        case APP_CMD_INPUT_CHANGED:
+            // TODO handle all commands
             break;
-
-
         default:
             LOG_I(TAG, "   • Unknown app command %d", command)
             break;
@@ -72,7 +96,7 @@ static int32_t on_key_event(struct android_app *app, AInputEvent *event) {
 
     // The key code (ie : physical id)
     code = AKeyEvent_getKeyCode(event);
-    LOG_D(TAG, "   • Event : action=%d, code=%d", action,code);
+    LOG_D(TAG, "   • Event : action=%d, code=%d", action, code);
 
 
     switch (code) {
@@ -126,8 +150,11 @@ void android_main(struct android_app *app) {
     // Call a method from the android_native_app_glue to make sure it is linked
     app_dummy();
 
+    // Create the engine
+    GLEngine *engine = new GLEngine();
+
     // setup the application callbacks
-    // app->userData = ... ;
+    app->userData = (void *) engine;
     app->onAppCmd = handle_app_cmd;
     app->onInputEvent = handle_input_event;
 
@@ -135,6 +162,7 @@ void android_main(struct android_app *app) {
     int32_t events;
     struct android_poll_source *source;
     int poll_timeout_ms;
+    int ident;
 
 
     // Main application loop
@@ -146,7 +174,8 @@ void android_main(struct android_app *app) {
         poll_timeout_ms = -1;
 
         // Poll looper events
-        while (ALooper_pollAll(poll_timeout_ms, NULL, &events, (void **) &source) >= 0) {
+        ident = ALooper_pollAll(poll_timeout_ms, NULL, &events, (void **) &source);
+        if (ident >= 0) {
 
             // process events
             if (source != NULL) {
@@ -164,6 +193,7 @@ void android_main(struct android_app *app) {
         }
 
         // perform animations, updates, ...
+        engine->draw_frame();
 
     }
 }
