@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2014 Xavier Gouchet
+ * 
+ * This file is licensed under The MIT License (MIT). 
+ * For more information, check the "LICENSE" file available in the root directory of this project.
+ */
+ 
 #include <GLES2/gl2.h>
 
 #include "GLEngine.h"
@@ -5,6 +12,7 @@
 
 #define TAG  "GLEngine"
 
+/** Constructor */
 GLEngine::GLEngine() {
 
     m_width = 0;
@@ -12,28 +20,18 @@ GLEngine::GLEngine() {
 
     m_display = EGL_NO_DISPLAY;
     m_context = EGL_NO_CONTEXT;
-    m_surface = NULL;
+    m_surface = EGL_NO_SURFACE;
 }
 
+/** Destructor */
 GLEngine::~GLEngine() {
 }
 
 /**
-* Initialises the OpenGL context and the EGL interface.
-* EGL is the interface between OpenGL ES and the native Android window system.
-*/
+ * Initialises the OpenGL context and the EGL interface.
+ */
 void GLEngine::init_display(ANativeWindow *window) {
     LOG_D(TAG, " ❯ init_display(window)");
-
-    // Required configuration of the EGL display
-    const EGLint requirements[] = {
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-            EGL_BLUE_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_RED_SIZE, 8,
-            EGL_NONE
-    };
-
 
     EGLint width, height, dummy, format;
     EGLint numConfigs;
@@ -41,17 +39,26 @@ void GLEngine::init_display(ANativeWindow *window) {
     EGLSurface surface;
     EGLContext context;
     EGLDisplay display;
-
+    
+    // Specifies the requirements for the display we want
+    const EGLint requirements[] = {
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+            EGL_BLUE_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_RED_SIZE, 8,
+            EGL_NONE
+    };
+    
     // get the default display
     display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     eglInitialize(display, 0, 0);
 
-    // choose a configuration matching the requirements
+    // choose the first configuration matching the requirements
     eglChooseConfig(display, requirements, &config, 1, &numConfigs);
 
-    // get the format of the frame buffer from the chosen configuration
+    // get the format of the frame buffer from the chosen configuration...
     eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
-    // update the window with the format
+    // ... and update the native window accordingly
     ANativeWindow_setBuffersGeometry(window, 0, 0, format);
 
     // create the surface and context
@@ -80,10 +87,14 @@ void GLEngine::init_display(ANativeWindow *window) {
     glCullFace(GL_BACK);
 }
 
+/**
+ * Destroys and cleans the OpenGL and EGL states to release the display
+ */
 void GLEngine::terminate_display() {
 
     if (m_display != EGL_NO_DISPLAY) {
 
+        // make sure the display is current 
         eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
         if (m_context != EGL_NO_CONTEXT) {
@@ -92,6 +103,7 @@ void GLEngine::terminate_display() {
         if (m_surface != EGL_NO_SURFACE) {
             eglDestroySurface(m_display, m_surface);
         }
+        
         eglTerminate(m_display);
     }
 
@@ -100,6 +112,9 @@ void GLEngine::terminate_display() {
     m_surface = EGL_NO_SURFACE;
 }
 
+/**
+ * Renders a single frame on the current display
+ */
 void GLEngine::draw_frame() {
 
     LOG_D(TAG, " ❯ draw_frame()");
@@ -120,5 +135,4 @@ void GLEngine::draw_frame() {
     } else {
         LOG_W(TAG, "   • swap failed");
     }
-
 }

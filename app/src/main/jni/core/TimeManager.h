@@ -1,31 +1,46 @@
+/**
+ * Copyright (c) 2014 Xavier Gouchet
+ * 
+ * This file is licensed under The MIT License (MIT). 
+ * For more information, check the "LICENSE" file available in the root directory of this project.
+ */
+ 
 #ifndef TIME_UTILS_H
 #define TIME_UTILS_H
 
+/** A unified unit to talk about time */
 typedef long long TimeUnit;
 
 #define SECOND_IN_NANO 1000000000LL
 
+/**
+ * A simple utility class used to compute times 
+ */
 class TimeManager {
 
 private :
-
-    static TimeManager s_instance;
-
-    TimeUnit m_last_frame;
+    
+    /** the last time get_delta_time_nano() was called */
+    TimeUnit m_last_update_time;
 
 
 public:
 
+    /** Constructor */
     TimeManager();
-
+    
+    /** Destructor */
     ~TimeManager();
 
-    TimeUnit get_nano_time();
+    /**
+     * Get the current time in nanoseconds 
+     */
+    TimeUnit get_time_nano();
 
-    TimeUnit get_delta_time();
-
-    TimeUnit get_remaining_time();
-
+    /**
+     * Get the elapsed time since the last game update
+     */
+    TimeUnit get_delta_time_nano();
 
 };
 

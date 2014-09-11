@@ -1,23 +1,33 @@
-#include "CoreEngine.h"
+/**
+ * Copyright (c) 2014 Xavier Gouchet
+ * 
+ * This file is licensed under The MIT License (MIT). 
+ * For more information, check the "LICENSE" file available in the root directory of this project.
+ */
 
+#include "CoreEngine.h"
 #include "../utils/Logs.h"
 
 #define TAG  "CoreEngine"
 
+/** Constructor */
 CoreEngine::CoreEngine() {
+    m_game_engine = new GameEngine();
     m_gl_engine = new GLEngine();
     m_time_manager = new TimeManager();
 }
 
 
+/** Destructor */
 CoreEngine::~CoreEngine() {
+    delete m_game_engine;
     delete m_gl_engine;
     delete m_time_manager;
 }
 
 /**
-* Method to handle the application commands, usually linked to the application lifecycle
-*/
+ * Method to handle the application commands, usually linked to the application lifecycle
+ */
 void CoreEngine::handle_app_command(struct android_app *app, int32_t command) {
     LOG_D(TAG, " ❯ handle_app_cmd(app, command=%d)", command);
 
@@ -64,10 +74,10 @@ void CoreEngine::handle_app_command(struct android_app *app, int32_t command) {
 
 
 /**
-* Callback for input events (touch, key).
-* Return 1 to notify that the event was handled internally, or 0 to let the
-* default behavior (eg : back pressed)
-*/
+ * Callback for input events (touch, key).
+ * Return 1 to notify that the event was handled internally, or 0 to let the
+ * default behavior (eg : back pressed)
+ */
 int32_t CoreEngine::handle_input_event(AInputEvent *event) {
 
     LOG_D(TAG, " ❯ handle_input(app, event)");
@@ -93,9 +103,9 @@ int32_t CoreEngine::handle_input_event(AInputEvent *event) {
 }
 
 /**
-* Callback triggered when the user perform a touch event
-* Return 0 to let the framework handle the key event, 1 if everything has been handled
-*/
+ * Callback triggered when the user perform a touch event
+ * Return 0 to let the framework handle the key event, 1 if everything has been handled
+ */
 int32_t CoreEngine::on_touch_event(AInputEvent *event) {
 
     LOG_D(TAG, " ❯ on_touch_event(app, event)");
@@ -114,9 +124,9 @@ int32_t CoreEngine::on_touch_event(AInputEvent *event) {
 
 
 /**
-* Callback triggered when the user uses a physical (or software) key
-* Return 0 to let the framework handle the key event, 1 if everything has been handled
-*/
+ * Callback triggered when the user uses a physical (or software ?) key
+ * Return 0 to let the framework handle the key event, 1 if everything has been handled
+ */
 int32_t CoreEngine::on_key_event(AInputEvent *event) {
 
     LOG_D(TAG, " ❯ on_key_event(app, event)");
@@ -142,8 +152,8 @@ int32_t CoreEngine::on_key_event(AInputEvent *event) {
 }
 
 /**
-* Poll all available looper events
-*/
+ * Poll all available looper events
+ */
 void CoreEngine::poll_looper_events(struct android_app *app) {
 
     // variables holding the polled events information
@@ -163,9 +173,7 @@ void CoreEngine::poll_looper_events(struct android_app *app) {
     }
 }
 
-/**
-* The main loop
-*/
+/** The main loop */
 void CoreEngine::main_loop(struct android_app *app) {
 
 
@@ -175,8 +183,10 @@ void CoreEngine::main_loop(struct android_app *app) {
 
     // Main application loop
     while (1) {
-        // TODO monitor delta time
-        loop_begin_time = m_time_manager->get_nano_time();
+        LOG_V(TAG, "   • Main loop");
+        
+        // 
+        loop_begin_time = m_time_manager->get_time_nano();
         frames_skipped = 0;
 
         // 1 : handle external events (input, app lifecycle)
@@ -184,34 +194,40 @@ void CoreEngine::main_loop(struct android_app *app) {
 
         // 2 : check if the app needs to be destroyed
         if (app->destroyRequested != 0) {
-            LOG_D(TAG, "   • Destroy requested");
+            LOG_I(TAG, "   • Destroy requested");
             // exit all loops
             return;
         }
 
         // 3 : TODO update game system
-delta_time = m_time_manager->get_delta_time();
+        m_game_engine->update_game_state(m_time_manager->get_delta_time_nano());
+        
 
         // 4 : update rendering
         m_gl_engine->draw_frame();
 
         // 5 : Compute the sleep time
-        initial_step_time = m_time_manager->get_nano_time() - loop_begin_time;
-        sleep_time.tv_nsec = FRAME_PERIOD_NANO
-        -initial_step_time;
+        initial_step_time = m_time_manager->get_time_nano() - loop_begin_time;
+        sleep_time.tv_nsec = FRAME_PERIOD_NANO - initial_step_time;
 
-        // 5a : sleep time is positive, we're ahead of schedule
+        // 
+        // 6a : sleep time is positive, we're ahead of schedule
         if (sleep_time.tv_nsec >= 0) {
             nanosleep(&sleep_time, (struct timespec *) NULL);
         }
 
-        // TODO 5b : update game system to catch up
-//        while (sleepTime < 0 && framesSkipped < MAX_FRAME_SKIPS) {
-//            this.gamePanel.update();
-//            // add frame period to check if in next frame
-//            sleepTime += FRAME_PERIOD;
-//            framesSkipped++;
-//        }
+        // 6b : we have an overhead, so we need to catch up
+        // we'll force as many game update as the number of frames we missed (supposedly)
+        // but will only catch up as much as MAX_FRAME_SKIPPED frames
+        while ((sleep_time.tv_nsec < 0) && (frames_skipped < MAX_FRAME_SKIPPED)) {
+            LOG_D(TAG, "   • Catching up on missed frames");
+            
+            m_game_engine->update_game_state(m_time_manager->get_delta_time_nano());
+            
+            // add frame period to check if we get to thein next frame
+            sleep_time.tv_nsec += FRAME_PERIOD_NANO;
+            ++frames_skipped;
+        }
 
     }
 }

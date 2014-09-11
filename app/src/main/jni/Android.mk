@@ -24,6 +24,7 @@ LOCAL_SRC_FILES := AndroidMain.cpp
 LOCAL_SRC_FILES += core/CoreEngine.cpp
 LOCAL_SRC_FILES += core/TimeManager.cpp
 LOCAL_SRC_FILES += opengl/GLEngine.cpp
+LOCAL_SRC_FILES += game/GameEngine.cpp
 
 # configure the module
 LOCAL_PATH := $(TOP_LOCAL_PATH)
