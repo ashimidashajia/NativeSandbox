@@ -1,4 +1,3 @@
-
 #ifndef GL_ENGINE_H
 #define GL_ENGINE_H
 
@@ -17,9 +16,11 @@ private :
 public:
 
     GLEngine();
+
     ~GLEngine();
 
-    void init_display(ANativeWindow* window);
+    void init_display(ANativeWindow *window);
+
     void terminate_display();
 
     void draw_frame();

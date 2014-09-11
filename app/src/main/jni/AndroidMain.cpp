@@ -1,9 +1,9 @@
-#include <android_native_app_glue.h>
-
 #include "AndroidMain.h"
+
 #include "utils/Logs.h"
-#include "opengl/GLEngine.h"
-#include "core/SavedState.h"
+#include "core/CoreEngine.h"
+
+#include <android_native_app_glue.h>
 
 
 // TODO Write a JNI_OnLoad mapping method
@@ -13,129 +13,30 @@ extern "C" {
 #define TAG  "AndroidMain"
 
 /**
-* Method to handle the application commands, usually linked to the application lifecycle
-*/
-static void handle_app_cmd(struct android_app *app, int32_t command) {
-    LOG_D(TAG, " ❯ handle_app_cmd(app, command=%d)", command);
-
-    GLEngine *engine = (GLEngine *) app->userData;
-
-    switch (command) {
-
-        case APP_CMD_INIT_WINDOW:
-            // The window is being initialised, set it up
-            if (app->window != NULL) {
-                engine->init_display(app->window);
-                engine->draw_frame();
-            }
-            break;
-
-        case APP_CMD_SAVE_STATE:
-            // TODO save current state
-            // app->savedState =  malloc(sizeof(...));
-            // app->savedStateSize = ... ;
-            break;
-
-
-        case APP_CMD_TERM_WINDOW:
-            // The window is being closed, release everything
-            engine->terminate_display();
-            break;
-
-
-        case APP_CMD_WINDOW_RESIZED:
-        case APP_CMD_WINDOW_REDRAW_NEEDED:
-        case APP_CMD_CONTENT_RECT_CHANGED:
-        case APP_CMD_GAINED_FOCUS:
-        case APP_CMD_LOST_FOCUS:
-        case APP_CMD_CONFIG_CHANGED:
-        case APP_CMD_LOW_MEMORY:
-        case APP_CMD_START:
-        case APP_CMD_RESUME:
-        case APP_CMD_INPUT_CHANGED:
-            // TODO handle all commands
-            break;
-        default:
-            LOG_I(TAG, "   • Unknown app command %d", command)
-            break;
-    }
-}
-
-/**
-* Callback triggered when the user perform a touch event
-* Return 0 to let the framework handle the key event, 1 if everything has been handled
-*/
-static int32_t on_touch_event(struct android_app *app, AInputEvent *event) {
-
-    LOG_D(TAG, " ❯ on_touch_event(app, event)");
-
-    size_t i, pointer_count = AMotionEvent_getPointerCount(event);
-    float x, y;
-
-    for (i = 0; i < pointer_count; ++i) {
-        x = AMotionEvent_getX(event, i);
-        y = AMotionEvent_getY(event, i);
-        LOG_D(TAG, "   • Motion event %zu: (%.2f, %.2f)", i, x, y);
-    }
-
-    return 0;
-}
-
-/**
-* Callback triggered when the user uses a physical (or software) key
-* Return 0 to let the framework handle the key event, 1 if everything has been handled
-*/
-static int32_t on_key_event(struct android_app *app, AInputEvent *event) {
-
-    LOG_D(TAG, " ❯ on_key_event(app, event)");
-
-    int32_t action, code;
-
-    // AKEY_EVENT_ACTION_DOWN / AKEY_EVENT_ACTION_UP / AKEY_EVENT_ACTION_MULTIPLE
-    action = AKeyEvent_getAction(event);
-
-    // The key code (ie : physical id)
-    code = AKeyEvent_getKeyCode(event);
-    LOG_D(TAG, "   • Event : action=%d, code=%d", action, code);
-
-
-    switch (code) {
-        // let the back key press be handled automatically by the framework
-        case AKEYCODE_BACK:
-            return 0;
-        default :
-            return 0;
-    }
-
-}
-
-/**
 * Callback for input events (touch, key).
 * Return 1 to notify that the event was handled internally, or 0 to let the
 * default behavior (eg : back pressed)
 */
 static int32_t handle_input_event(struct android_app *app, AInputEvent *event) {
+    CoreEngine *engine = (CoreEngine *) app->userData;
 
-    LOG_D(TAG, " ❯ handle_input(app, event)");
-    int32_t event_type = AInputEvent_getType(event);
-    int32_t handled = 0;
-
-
-    switch (event_type) {
-        case AINPUT_EVENT_TYPE_MOTION :
-            handled = on_touch_event(app, event);
-            break;
-
-        case AINPUT_EVENT_TYPE_KEY:
-            handled = on_key_event(app, event);
-            break;
-
-        default:
-            LOG_I(TAG, "   • Unknown event type %d", event_type)
-            break;
+    if (engine == NULL) {
+        return 0;
     }
 
-    return handled;
+    return engine->handle_input_event(event);
+}
+
+
+/**
+* Method to handle the application commands, usually linked to the application lifecycle
+*/
+static void handle_app_command(struct android_app *app, int32_t command) {
+    CoreEngine *engine = (CoreEngine *) app->userData;
+
+    if (engine != NULL) {
+        engine->handle_app_command(app, command);
+    }
 }
 
 /**
@@ -151,51 +52,15 @@ void android_main(struct android_app *app) {
     app_dummy();
 
     // Create the engine
-    GLEngine *engine = new GLEngine();
+    CoreEngine *core_engine = new CoreEngine();
 
     // setup the application callbacks
-    app->userData = (void *) engine;
-    app->onAppCmd = handle_app_cmd;
+    app->userData = (void *) core_engine;
+    app->onAppCmd = handle_app_command;
     app->onInputEvent = handle_input_event;
 
-    // variables holding the polled events information
-    int32_t events;
-    struct android_poll_source *source;
-    int poll_timeout_ms;
-    int ident;
-
-
-    // Main application loop
-    while (1) {
-
-        // -1 = no timeout
-        // 0 = non blocking
-        // >0 = timeout in milliseconds
-        poll_timeout_ms = -1;
-
-        // Poll looper events
-        ident = ALooper_pollAll(poll_timeout_ms, NULL, &events, (void **) &source);
-        if (ident >= 0) {
-
-            // process events
-            if (source != NULL) {
-                LOG_D(TAG, "   • Processing an event %d", source->id);
-                // let the source process the events and forward them to our callbacks
-                source->process(app, source);
-            }
-
-            // check if the app needs to be destroyed
-            if (app->destroyRequested != 0) {
-                LOG_D(TAG, "   • Destroy requested");
-                // exit all loops
-                return;
-            }
-        }
-
-        // perform animations, updates, ...
-        engine->draw_frame();
-
-    }
+    // Start the main loop
+    core_engine->main_loop(app);
 }
 
 }

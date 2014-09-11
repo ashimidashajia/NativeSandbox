@@ -21,6 +21,8 @@ include $(CLEAR_VARS)
 
 # setup the source files
 LOCAL_SRC_FILES := AndroidMain.cpp
+LOCAL_SRC_FILES += core/CoreEngine.cpp
+LOCAL_SRC_FILES += core/TimeManager.cpp
 LOCAL_SRC_FILES += opengl/GLEngine.cpp
 
 # configure the module
