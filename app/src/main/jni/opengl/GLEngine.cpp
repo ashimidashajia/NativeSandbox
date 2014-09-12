@@ -5,10 +5,11 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
-#include <GLES2/gl2.h>
-
 #include "GLEngine.h"
+#include "GLES2Renderer.h"
 #include "../utils/Logs.h"
+
+#include <stdlib.h>
 
 #define TAG  "GLEngine"
 
@@ -28,7 +29,15 @@ GLEngine::~GLEngine() {
 }
 
 /**
- * Initialises the OpenGL context and the EGL interface.
+ * Prints the GL String corresponding to the identifier, prefixed by the given name
+ */
+void GLEngine::print_gl_string(const char* name, GLenum identifier) {
+    const char* value = (const char*) glGetString(identifier);
+    LOG_D(TAG, "   • %s => %s", name, value);
+}
+
+/**
+ * Initialises the EGL interface and bind it to the application's window.
  */
 void GLEngine::init_display(ANativeWindow *window) {
     LOG_D(TAG, " ❯ init_display(window)");
@@ -81,11 +90,36 @@ void GLEngine::init_display(ANativeWindow *window) {
     m_context = context;
 
     // init the GL context
-    glEnable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
-    glFrontFace(GL_CW);
-    glCullFace(GL_BACK);
+    init_gl_context();
 }
+
+/**
+ * Initialises the Open GL ES context.
+ */
+void GLEngine::init_gl_context() {
+    
+    // print out some info 
+    print_gl_string("Version", GL_VERSION);
+    print_gl_string("Vendor", GL_VENDOR);
+    print_gl_string("Renderer", GL_RENDERER);
+    print_gl_string("Extensions", GL_EXTENSIONS);
+    
+    // Check the OpenGL ES version
+    const char* version = (const char*) glGetString(GL_VERSION);
+    if (strstr(version, "OpenGL ES 3.") || strstr(version, "OpenGL ES 2.")) {
+        m_renderer = new GLES2Renderer();
+        
+        // make sure we initialise it properly    
+        if (!m_renderer->init()) {
+            delete m_renderer;
+            m_renderer = NULL;
+        }
+    
+    } else {
+        LOG_E(TAG, "   • Unsupported OpenGL ES version : %s", version);
+    }
+}
+ 
 
 /**
  * Destroys and cleans the OpenGL and EGL states to release the display
@@ -124,11 +158,11 @@ void GLEngine::draw_frame() {
         return;
     }
 
-    // Just fill the screen with a color.
-    glClearColor(0.1f, 0.5f, 0.9f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
+    // make the renderer draw a frame 
+    if (m_renderer){
+        m_renderer->draw_frame();
+    }
+    
     // Swap the display and surface buffer
     if (eglSwapBuffers(m_display, m_surface)) {
         LOG_V(TAG, "   • buffers swapped");

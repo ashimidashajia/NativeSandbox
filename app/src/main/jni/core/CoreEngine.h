@@ -11,6 +11,7 @@
 #include "../opengl/GLEngine.h"
 #include "../game/GameEngine.h"
 #include "TimeManager.h"
+#include "SavedState.h"
 
 #include <stdint.h>
 #include <android_native_app_glue.h>
@@ -27,33 +28,6 @@
  * application life cycle, device sensors, ...)
  */
 class CoreEngine {
-
-private :
-
-    /** The OpenGL engine */
-    GLEngine *m_gl_engine;
-    /** The Game engine */
-    GameEngine *m_game_engine; 
-    /** The time manager */
-    TimeManager *m_time_manager;
-
-    /**
-     * Callback triggered when the user perform a touch event
-     * Return 0 to let the framework handle the key event, 1 if everything has been handled
-     */
-    int32_t on_touch_event(AInputEvent *event);
-
-    /**
-     * Callback triggered when the user uses a physical (or software ?) key
-     * Return 0 to let the framework handle the key event, 1 if everything has been handled
-     */
-    int32_t on_key_event(AInputEvent *event);
-
-    /**
-     * Poll all available looper events
-     */
-    void poll_looper_events(struct android_app *app);
-
 
 public:
 
@@ -77,6 +51,34 @@ public:
 
     /** The main loop */
     void main_loop(struct android_app *app);
+
+private :
+
+    /** The OpenGL engine */
+    GLEngine *m_gl_engine;
+    /** The Game engine */
+    GameEngine *m_game_engine; 
+    /** The time manager */
+    TimeManager *m_time_manager;
+    /** the saved state (for seamless app transitions) */
+    SavedState *m_saved_state; 
+
+    /**
+     * Callback triggered when the user perform a touch event
+     * Return 0 to let the framework handle the key event, 1 if everything has been handled
+     */
+    int32_t on_touch_event(AInputEvent *event);
+
+    /**
+     * Callback triggered when the user uses a physical (or software ?) key
+     * Return 0 to let the framework handle the key event, 1 if everything has been handled
+     */
+    int32_t on_key_event(AInputEvent *event);
+
+    /**
+     * Poll all available looper events
+     */
+    void poll_looper_events(struct android_app *app);
 };
 
 #endif

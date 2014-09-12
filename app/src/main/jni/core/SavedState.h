@@ -8,30 +8,41 @@
 #ifndef SAVED_STATE_H
 #define SAVED_STATE_H
 
+#include <stdint.h>
 
+/**
+ * This class handles the saving of the game state, to let the user come back to where he had left off. 
+ */
 class SavedState {
 
-private :
 
-    int32_t m_x;
-    int32_t m_y;
 
 public:
 
+    /** Constructor */
     SavedState();
 
+    /** Destructor */
     ~SavedState();
-
-    void set_position(int32_t x, int32_t y);
-
+    
     /**
-     * the size to allocate for the saved state
+     * Gets the size to allocate for the saved state.
      */
     size_t get_saved_state_size();
 
-    void get_saved_state_data(void *saved_data);
+    /**
+     * Reads the saved data from the given pointer. 
+     */
+    void read_saved_state_data(void *saved_data, size_t saved_data_size);
 
-    void load_saved_state_data(void *saved_data);
+    /**
+     * Writes the saved data into the given pointer. 
+     * The memory has already been allocated according to get_saved_state_size(). 
+     */
+    void write_saved_state_data(void *saved_data);
+    
+private :
+
 };
 
 #endif

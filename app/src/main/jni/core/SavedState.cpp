@@ -7,16 +7,30 @@
  
 #include "SavedState.h"
 
+/** Constructor */
 SavedState::SavedState() {
-    m_x = 0;
-    m_y = 0;
 }
 
+/** Destructor */
 SavedState::~SavedState() {
-
 }
 
-void SavedState::set_position(int32_t x, int32_t y) {
-    m_x = x;
-    m_y = y;
+/**
+ * Gets the size to allocate for the saved state.
+ */
+size_t SavedState::get_saved_state_size(){
+    return 0; 
+}
+
+/**
+ * Reads the saved data from the given pointer. 
+ */
+void SavedState::read_saved_state_data(void *saved_data, size_t saved_data_size){
+}
+
+/**
+ * Writes the saved data into the given pointer. 
+ * The memory has already been allocated according to get_saved_state_size(). 
+ */
+void SavedState::write_saved_state_data(void *saved_data){
 }

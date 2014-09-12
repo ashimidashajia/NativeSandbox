@@ -15,6 +15,7 @@ CoreEngine::CoreEngine() {
     m_game_engine = new GameEngine();
     m_gl_engine = new GLEngine();
     m_time_manager = new TimeManager();
+    m_saved_state = new SavedState();
 }
 
 
@@ -23,6 +24,7 @@ CoreEngine::~CoreEngine() {
     delete m_game_engine;
     delete m_gl_engine;
     delete m_time_manager;
+    delete m_saved_state; 
 }
 
 /**
@@ -41,12 +43,15 @@ void CoreEngine::handle_app_command(struct android_app *app, int32_t command) {
             }
             break;
 
-        case APP_CMD_SAVE_STATE:
-            // TODO save current state
-            // app->savedState =  malloc(sizeof(...));
-            // app->savedStateSize = ... ;
+        case APP_CMD_SAVE_STATE: 
+            {
+                // save current state
+                size_t saved_state_size = m_saved_state->get_saved_state_size();
+                app->savedState =  malloc(saved_state_size);
+                m_saved_state->write_saved_state_data(app->savedState); 
+                app->savedStateSize = saved_state_size;
+            }
             break;
-
 
         case APP_CMD_TERM_WINDOW:
             // The window is being closed, release everything

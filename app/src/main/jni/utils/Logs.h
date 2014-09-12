@@ -5,8 +5,8 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
 
-#ifndef LOGS_H_
-#define LOGS_H_
+#ifndef LOGS_H
+#define LOGS_H
 
 #include <android/log.h>
 

@@ -24,8 +24,6 @@
  */
 class GameEngine {
 
-private :
-    
 public:
 
     /** Constructor */
@@ -38,7 +36,9 @@ public:
      * Method to update the whole game state
      */
     void update_game_state(TimeUnit delta_time);
-    
+
+private :
+        
 };
 
 #endif
