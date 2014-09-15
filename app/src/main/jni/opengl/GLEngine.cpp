@@ -14,7 +14,7 @@
 
 #define TAG  "GLEngine"
 
-#define DISPLAY_ALL_CONFIG
+// #define DISPLAY_ALL_CONFIG
 #define DISPLAY_INFOS   1
 
 /** Constructor */
@@ -83,32 +83,6 @@ void GLEngine::init_display(ANativeWindow *window) {
     EGLint depth_size = 0, stencil_size = 0;
     for(int i = 0; i < num_configs; ++i){
 
-        /**
-        *
-        * EGL_BIND_TO_TEXTURE_RGB
-        * EGL_BIND_TO_TEXTURE_RGBA
-        *
-        * EGL_CONFIG_CAVEAT
-        * EGL_CONFIG_ID
-        * EGL_CONFORMANT
-        *
-        * EGL_LEVEL
-        * EGL_LUMINANCE_SIZE
-        * EGL_MATCH_NATIVE_PIXMAP
-        * EGL_NATIVE_RENDERABLE
-        * EGL_MAX_SWAP_INTERVAL
-        * EGL_MIN_SWAP_INTERVAL
-        *
-        * EGL_SAMPLE_BUFFERS
-        * EGL_SAMPLES
-        *
-        * EGL_RED_SIZE
-        * EGL_GREEN_SIZE
-        * EGL_BLUE_SIZE
-        * EGL_ALPHA_SIZE
-        *  EGL_ALPHA_MASK_SIZE
-        */
-
         eglGetConfigAttrib(display, configs[i], EGL_RENDERABLE_TYPE, &renderable_type);
         eglGetConfigAttrib(display, configs[i], EGL_SURFACE_TYPE, &surface_type);
         eglGetConfigAttrib(display, configs[i], EGL_TRANSPARENT_TYPE, &transparent_type);
@@ -126,15 +100,11 @@ void GLEngine::init_display(ANativeWindow *window) {
 
         LOG_D(TAG, "              depth size = %d", depth_size);
         LOG_D(TAG, "            stencil size = %d", stencil_size);
-
-
-
     }
 
 #else
 
     EGLint num_configs;
-    eglChooseConfig(display, requirements, &config, 1, &num_configs);
 
 #endif
 
@@ -199,9 +169,11 @@ void GLEngine::init_gl_context() {
     const char *version = (const char *) glGetString(GL_VERSION);
     if (strstr(version, "OpenGL ES 2.")) {
         m_renderer = new GLES2Renderer();
-    // TODO } else if (strstr(version, "OpenGL ES 3.")){
+    } else if (strstr(version, "OpenGL ES 3.")){
+        m_renderer = new GLES2Renderer();
     } else {
         m_renderer = NULL;
+        LOG_W(TAG, "   • OpenGL version not compatible (%s)", version);
     }
 
     if (m_renderer) {
@@ -261,6 +233,8 @@ void GLEngine::draw_frame() {
         } else {
             LOG_W(TAG, "   • swap failed");
         }
+    } else {
+        LOG_W(TAG, "   • no renderer");
     }
 }
 
