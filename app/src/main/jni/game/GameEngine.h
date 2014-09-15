@@ -8,6 +8,7 @@
 #ifndef GAME_ENGINE_H
 #define GAME_ENGINE_H
 
+#include "GameObject.h"
 #include "../core/TimeManager.h"
 
 #include <stdint.h>
@@ -38,6 +39,9 @@ public:
     void update_game_state(TimeUnit delta_time);
 
 private :
+
+    /** list of game objects */
+    // List<Object> m_objects;;
         
 };
 

@@ -9,7 +9,7 @@
 #define GL_ES_2_RENDERER_H
 
 #include "GLRenderer.h"
-#include "GLShader.h"
+#include "../model/Shader.h"
 
 /**
  * The GLES2Renderer class is an implementation of GLRenderer using Open GL ES 2.0 apis. 
@@ -39,7 +39,7 @@ protected:
 private:
 
     /** the shader */
-    GLShader* m_shader; 
+    Shader* m_shader; 
     
 };
 

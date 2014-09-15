@@ -34,7 +34,7 @@ protected:
 
     /** Protected constructor */
     GLRenderer() {}
-    
+ 
 };
 
 

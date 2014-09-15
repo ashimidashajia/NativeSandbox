@@ -5,11 +5,10 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
-#ifndef GL_SHADER_H
-#define GL_SHADER_H
+#ifndef SHADER_H
+#define SHADER_H
 
-#include "GLShader.h"
-#include "GLES2/gl2.h"
+#include <GLES2/gl2.h>
 
 /**
  * Default Vertex / Fragment Shader
@@ -35,17 +34,17 @@ static const char FS_DEFAULT[] =
     "}\n";
 
 /**
- * The GLShader class handles the compilation and communication with a shader program
+ * The Shader class handles the compilation and communication with a shader program
  */
-class GLShader {
+class Shader {
 
 public:
 
     /** Constructor */
-    GLShader();
+    Shader();
     
     /** Destructor */
-    ~GLShader();
+    ~Shader();
     
     /**
      * Initialises the shader. Returns true if the initialisation was  succesfull
@@ -57,10 +56,27 @@ public:
      */
     void set_active();
     
+    /** 
+     * Returns the vertex array position attribute index (or -1)
+     */
+    GLint get_position_attrib();
+    
+    /** 
+     * Returns the vertex array color attribute index (or -1)
+     */
+    GLint get_color_attrib();
+    
 private:
 
     /** the id of the shader program */
     GLuint m_program;
+    
+    /** the shader attributes */
+    GLint m_pos_attrib;
+    GLint m_color_attrib;
+    
+    //GLint mScaleRotUniform;
+    //GLint mOffsetUniform;
     
 };
 

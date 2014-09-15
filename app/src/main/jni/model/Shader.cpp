@@ -5,16 +5,16 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
 
-#include "GLShader.h"
-#include "GLUtils.h"
+#include "Shader.h"
+#include "../opengl/GLUtils.h"
 
 /** Constructor */
-GLShader::GLShader(){
+Shader::Shader(){
     m_program = 0; 
 }
 
 /** Destructor */
-GLShader::~GLShader(){
+Shader::~Shader(){
     if (m_program){
         glDeleteProgram(m_program);
     }
@@ -23,7 +23,7 @@ GLShader::~GLShader(){
 /**
  * Initialises the shader. Returns true if the initialisation was  succesfull
  */
-bool GLShader::init(const char* vs_source, const char* fs_source){
+bool Shader::init(const char* vs_source, const char* fs_source){
     
     // compile the shader programs 
     m_program = create_program(VS_DEFAULT, FS_DEFAULT);
@@ -31,9 +31,9 @@ bool GLShader::init(const char* vs_source, const char* fs_source){
         return false;
     }
     
-    // TODO retrieve the shader attributes 
-    // mPosAttrib = glGetAttribLocation(m_program, "pos");
-    // mColorAttrib = glGetAttribLocation(m_program, "color");
+    // retrieve the shader attributes 
+    m_pos_attrib = glGetAttribLocation(m_program, "pos");
+    m_color_attrib = glGetAttribLocation(m_program, "color");
     // mScaleRotUniform = glGetUniformLocation(m_program, "scaleRot");
     // mOffsetUniform = glGetUniformLocation(m_program, "offset");
 
@@ -42,10 +42,22 @@ bool GLShader::init(const char* vs_source, const char* fs_source){
 /**
  * Sets this Shader as the active one for the next renderings to be done
  */
-void GLShader::set_active(){
+void Shader::set_active(){
     if (m_program){
         glUseProgram(m_program);
     }
 }
 
+/** 
+ * Returns the vertex array position attribute index (or -1)
+ */
+GLint Shader::get_position_attrib() {
+    return m_pos_attrib;
+}
 
+/** 
+ * Returns the vertex array color attribute index (or -1)
+ */
+GLint Shader::get_color_attrib() {
+    return m_color_attrib;
+}

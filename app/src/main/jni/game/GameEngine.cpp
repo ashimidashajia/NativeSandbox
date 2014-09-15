@@ -26,4 +26,7 @@ void GameEngine::update_game_state(TimeUnit delta_time) {
     LOG_V(TAG, "   • delta time %lld", delta_time);
     
     // TODO update some things 
+    // foreach (GameObject in m_game_objects) {
+    //      object->update(delta_time);
+    // }
 }

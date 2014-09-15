@@ -22,6 +22,8 @@ GLEngine::GLEngine() {
     m_display = EGL_NO_DISPLAY;
     m_context = EGL_NO_CONTEXT;
     m_surface = EGL_NO_SURFACE;
+    
+    m_renderer = NULL;
 }
 
 /** Destructor */
@@ -161,12 +163,12 @@ void GLEngine::draw_frame() {
     // make the renderer draw a frame 
     if (m_renderer){
         m_renderer->draw_frame();
-    }
-    
-    // Swap the display and surface buffer
-    if (eglSwapBuffers(m_display, m_surface)) {
-        LOG_V(TAG, "   • buffers swapped");
-    } else {
-        LOG_W(TAG, "   • swap failed");
+        
+        // Swap the display and surface buffer
+        if (eglSwapBuffers(m_display, m_surface)) {
+            LOG_V(TAG, "   • buffers swapped");
+        } else {
+            LOG_W(TAG, "   • swap failed");
+        }
     }
 }

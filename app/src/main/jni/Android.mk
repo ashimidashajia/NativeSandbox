@@ -29,7 +29,10 @@ LOCAL_SRC_FILES += core/SavedState.cpp
 LOCAL_SRC_FILES += opengl/GLUtils.cpp
 LOCAL_SRC_FILES += opengl/GLEngine.cpp
 LOCAL_SRC_FILES += opengl/GLES2Renderer.cpp
-LOCAL_SRC_FILES += opengl/GLShader.cpp
+
+LOCAL_SRC_FILES += model/Shader.cpp
+LOCAL_SRC_FILES += model/Geometry.cpp
+LOCAL_SRC_FILES += model/Model.cpp
 
 LOCAL_SRC_FILES += game/GameEngine.cpp
 
