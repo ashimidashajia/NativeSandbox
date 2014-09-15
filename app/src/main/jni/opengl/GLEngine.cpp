@@ -55,11 +55,14 @@ void GLEngine::init_display(ANativeWindow *window) {
 #endif
 
     // Specifies the requirements for the display we want
-    const EGLint requirements[] = {
-            /* EGL_SURFACE_TYPE, EGL_WINDOW_BIT,*/
+    const EGLint attrib_list[] = {
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
             EGL_BLUE_SIZE, 8,
             EGL_GREEN_SIZE, 8,
             EGL_RED_SIZE, 8,
+            EGL_DEPTH_SIZE, 24,
+            EGL_STENCIL_SIZE, 8,
             EGL_NONE
     };
 
@@ -68,59 +71,102 @@ void GLEngine::init_display(ANativeWindow *window) {
 
     // get the number of configs matching the requirements
     EGLint num_configs;
-    eglChooseConfig(display, requirements, NULL, 0, &num_configs);
+    eglChooseConfig(display, attrib_list, NULL, 0, &num_configs);
     LOG_D(TAG, "   • %d EGL configurations found", num_configs);
 
     // find matching configurations
     EGLConfig configs[num_configs];
-    EGLint client_version = 0, depth_size = 0, stencil_size = 0, surface_type = 0;
-    eglChooseConfig(display, requirements, configs, num_configs, &num_configs);
+    eglChooseConfig(display, attrib_list, configs, num_configs, &num_configs);
+
+    // Display each config infos
+    EGLint renderable_type = 0, surface_type = 0, transparent_type = 0, colorbuffer_type = 0;
+    EGLint depth_size = 0, stencil_size = 0;
     for(int i = 0; i < num_configs; ++i){
 
-        eglGetConfigAttrib(display, configs[i], EGL_CONTEXT_CLIENT_VERSION, &client_version);
+        /**
+        *
+        * EGL_BIND_TO_TEXTURE_RGB
+        * EGL_BIND_TO_TEXTURE_RGBA
+        *
+        * EGL_CONFIG_CAVEAT
+        * EGL_CONFIG_ID
+        * EGL_CONFORMANT
+        *
+        * EGL_LEVEL
+        * EGL_LUMINANCE_SIZE
+        * EGL_MATCH_NATIVE_PIXMAP
+        * EGL_NATIVE_RENDERABLE
+        * EGL_MAX_SWAP_INTERVAL
+        * EGL_MIN_SWAP_INTERVAL
+        *
+        * EGL_SAMPLE_BUFFERS
+        * EGL_SAMPLES
+        *
+        * EGL_RED_SIZE
+        * EGL_GREEN_SIZE
+        * EGL_BLUE_SIZE
+        * EGL_ALPHA_SIZE
+        *  EGL_ALPHA_MASK_SIZE
+        */
+
+        eglGetConfigAttrib(display, configs[i], EGL_RENDERABLE_TYPE, &renderable_type);
+        eglGetConfigAttrib(display, configs[i], EGL_SURFACE_TYPE, &surface_type);
+        eglGetConfigAttrib(display, configs[i], EGL_TRANSPARENT_TYPE, &transparent_type);
+        eglGetConfigAttrib(display, configs[i], EGL_COLOR_BUFFER_TYPE, &colorbuffer_type);
+
         eglGetConfigAttrib(display, configs[i], EGL_DEPTH_SIZE, &depth_size);
         eglGetConfigAttrib(display, configs[i], EGL_STENCIL_SIZE, &stencil_size);
-        eglGetConfigAttrib(display, configs[i], EGL_SURFACE_TYPE, &surface_type);
+
 
         LOG_D(TAG, "   • Configuration [%i] : ", i);
-        LOG_D(TAG, "       depth size = %d", depth_size);
-        LOG_D(TAG, "       stencil size = %d", stencil_size);
-        LOG_D(TAG, "       client version = 0x%08x", client_version);
-        LOG_D(TAG, "       surface type = %d", surface_type);
+        LOG_D(TAG, "         renderable type = 0x%08x", renderable_type);
+        LOG_D(TAG, "            surface type = %d", surface_type);
+        LOG_D(TAG, "        transparent type = %d", transparent_type);
+        LOG_D(TAG, "       color buffer type = %d", colorbuffer_type);
+
+        LOG_D(TAG, "              depth size = %d", depth_size);
+        LOG_D(TAG, "            stencil size = %d", stencil_size);
+
+
 
     }
 
-    // TODO set best matching config
-    EGLConfig config;
-    eglChooseConfig(display, requirements, &config, 1, &num_configs);
-
 #else
 
-    // Get the first matching config
-    EGLConfig config;
     EGLint num_configs;
     eglChooseConfig(display, requirements, &config, 1, &num_configs);
 
-    EGLint api_level;
-    eglGetConfigAttrib(display, config, EGL_CONTEXT_CLIENT_VERSION, &api_level);
-    LOG_D(TAG, "   • client version =  0x%08x", api_level);
-
 #endif
 
-
+    // Automatic get config
+    EGLConfig config;
+    eglChooseConfig(display, attrib_list, &config, 1, &num_configs);
 
     // Update the window format from the configuration
     EGLint format;
     eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
     ANativeWindow_setBuffersGeometry(window, 0, 0, format);
 
-    // create the surface and context
+    // create the surface
     EGLSurface surface = eglCreateWindowSurface(display, config, window, NULL);
-    EGLContext context = eglCreateContext(display, config, NULL, NULL);
+    if (surface == EGL_NO_SURFACE){
+        LOG_E(TAG, "   • Unable to create egl surface");
+        return;
+    }
+
+    // Create the context
+    const EGLint context_attrib_list[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
+    EGLContext context = eglCreateContext(display, config, NULL, context_attrib_list);
+    if (context == EGL_NO_CONTEXT){
+        EGLint error = eglGetError();
+        LOG_E(TAG, "   • Unable to create egl context : 0x%08x", error);
+
+        return;
+    }
 
     // binds the EGL context to the surface
     if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-        LOG_W(TAG, "   • Unable to eglMakeCurrent");
+        LOG_E(TAG, "   • Unable to eglMakeCurrent");
         return;
     }
 
@@ -149,13 +195,21 @@ void GLEngine::init_gl_context() {
     print_gl_string("Open GL Extensions", GL_EXTENSIONS);
 #endif
 
-    // TODO Check the OpenGL ES version
-    m_renderer = new GLES2Renderer();
-
-    // make sure we initialise it properly
-    if (!m_renderer->init()) {
-        delete m_renderer;
+    // Check the OpenGL ES version
+    const char *version = (const char *) glGetString(GL_VERSION);
+    if (strstr(version, "OpenGL ES 2.")) {
+        m_renderer = new GLES2Renderer();
+    // TODO } else if (strstr(version, "OpenGL ES 3.")){
+    } else {
         m_renderer = NULL;
+    }
+
+    if (m_renderer) {
+        // make sure we initialise it properly
+        if (!m_renderer->init()) {
+            delete m_renderer;
+            m_renderer = NULL;
+        }
     }
 }
 
