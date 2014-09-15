@@ -132,6 +132,24 @@ GLuint create_shader(GLenum shader_type, const char *shader_source) {
     return shader_name;
 }
 
+
+/**
+ * Prints the GL String corresponding to the name, prefixed by the given text
+ */
+void print_gl_string(const char *text, GLenum name) {
+    const char *value = (const char *) glGetString(name);
+    LOG_D(TAG, "   • %s => %s", text, value);
+}
+
+/**
+* Prints the EGL String corresponding to the name, prefixed by the given text
+*/
+void print_egl_string(EGLDisplay display, const char *text, EGLint name) {
+    const char *value = (const char *) eglQueryString(display, name);
+    LOG_D(TAG, "   • %s => %s", text, value);
+}
+
+
 /**
  * Check any GL error message and log it, prefixed with the last GL called function name.
  * Return true if an error is detected.
@@ -139,7 +157,7 @@ GLuint create_shader(GLenum shader_type, const char *shader_source) {
 bool check_GL_error(const char *func_name) {
     GLint error_code = glGetError();
     if (error_code != GL_NO_ERROR) {
-        LOG_E(TAG, "   • GL error after %s(): 0x%08x\n", func_name, error_code);
+        LOG_E(TAG, "   • GL error after %s(): 0x%08x", func_name, error_code);
         return true;
     }
     return false;

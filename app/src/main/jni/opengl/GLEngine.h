@@ -65,8 +65,6 @@ private :
      */
     void init_gl_context();
 
-    static void print_gl_string(const char *name, GLenum s);
-
 };
 
 #endif
