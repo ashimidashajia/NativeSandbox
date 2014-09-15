@@ -24,7 +24,7 @@ CoreEngine::~CoreEngine() {
     delete m_game_engine;
     delete m_gl_engine;
     delete m_time_manager;
-    delete m_saved_state; 
+    delete m_saved_state;
 }
 
 /**
@@ -43,14 +43,13 @@ void CoreEngine::handle_app_command(struct android_app *app, int32_t command) {
             }
             break;
 
-        case APP_CMD_SAVE_STATE: 
-            {
-                // save current state
-                size_t saved_state_size = m_saved_state->get_saved_state_size();
-                app->savedState =  malloc(saved_state_size);
-                m_saved_state->write_saved_state_data(app->savedState); 
-                app->savedStateSize = saved_state_size;
-            }
+        case APP_CMD_SAVE_STATE: {
+            // save current state
+            size_t saved_state_size = m_saved_state->get_saved_state_size();
+            app->savedState = malloc(saved_state_size);
+            m_saved_state->write_saved_state_data(app->savedState);
+            app->savedStateSize = saved_state_size;
+        }
             break;
 
         case APP_CMD_TERM_WINDOW:
@@ -189,7 +188,7 @@ void CoreEngine::main_loop(struct android_app *app) {
     // Main application loop
     while (1) {
         LOG_V(TAG, "   • Main loop");
-        
+
         // 
         loop_begin_time = m_time_manager->get_time_nano();
         frames_skipped = 0;
@@ -206,7 +205,7 @@ void CoreEngine::main_loop(struct android_app *app) {
 
         // 3 : TODO update game system
         m_game_engine->update_game_state(m_time_manager->get_delta_time_nano());
-        
+
 
         // 4 : update rendering
         m_gl_engine->draw_frame();
@@ -226,9 +225,9 @@ void CoreEngine::main_loop(struct android_app *app) {
         // but will only catch up as much as MAX_FRAME_SKIPPED frames
         while ((sleep_time.tv_nsec < 0) && (frames_skipped < MAX_FRAME_SKIPPED)) {
             LOG_D(TAG, "   • Catching up on missed frames");
-            
+
             m_game_engine->update_game_state(m_time_manager->get_delta_time_nano());
-            
+
             // add frame period to check if we get to thein next frame
             sleep_time.tv_nsec += FRAME_PERIOD_NANO;
             ++frames_skipped;

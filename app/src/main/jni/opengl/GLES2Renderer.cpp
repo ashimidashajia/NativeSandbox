@@ -4,7 +4,7 @@
  * This file is licensed under The MIT License (MIT). 
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
- 
+
 #include "GLES2Renderer.h"
 #include "GLUtils.h"
 #include "../utils/Logs.h"
@@ -20,8 +20,8 @@ GLES2Renderer::GLES2Renderer() {
 
 /** Destructor */
 GLES2Renderer::~GLES2Renderer() {
-    if (m_shader){
-        delete m_shader; 
+    if (m_shader) {
+        delete m_shader;
     }
 }
 
@@ -38,14 +38,14 @@ bool GLES2Renderer::init() {
     glCullFace(GL_BACK);
 
     // TODO foreach renderable  : renderable.init
-    
+
     return true;
 }
 
 /**
  * Draws a single frame
  */
-void GLES2Renderer::draw_frame(){
+void GLES2Renderer::draw_frame() {
 
     // Clears the screen
     glClearColor(0.1f, 0.5f, 0.9f, 1.0f);

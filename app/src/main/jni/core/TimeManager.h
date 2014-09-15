@@ -5,6 +5,7 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #ifndef TIME_UTILS_H
 #define TIME_UTILS_H
 
@@ -19,7 +20,7 @@ typedef long long TimeUnit;
 class TimeManager {
 
 private :
-    
+
     /** the last time get_delta_time_nano() was called */
     TimeUnit m_last_update_time;
 
@@ -28,7 +29,7 @@ public:
 
     /** Constructor */
     TimeManager();
-    
+
     /** Destructor */
     ~TimeManager();
 

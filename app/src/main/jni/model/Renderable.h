@@ -5,9 +5,9 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #ifndef RENDERABLE_H
 #define RENDERABLE_H
-
 
 
 /**
@@ -16,20 +16,22 @@
 class Renderable /* : public Component */ {
 
 public:
-    
+
     /** Destructor */
-    ~Renderable(){}
-    
-    /** 
+    ~Renderable() {
+    }
+
+    /**
      * Renders the object
      */
-     virtual void render() = 0; 
-    
+    virtual void render() = 0;
+
 protected:
 
     /** Constructor */
-    Renderable(){}
-    
+    Renderable() {
+    }
+
 };
 
 #endif

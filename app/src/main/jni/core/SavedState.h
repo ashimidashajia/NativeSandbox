@@ -5,6 +5,7 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #ifndef SAVED_STATE_H
 #define SAVED_STATE_H
 
@@ -16,7 +17,6 @@
 class SavedState {
 
 
-
 public:
 
     /** Constructor */
@@ -24,7 +24,7 @@ public:
 
     /** Destructor */
     ~SavedState();
-    
+
     /**
      * Gets the size to allocate for the saved state.
      */
@@ -40,7 +40,7 @@ public:
      * The memory has already been allocated according to get_saved_state_size(). 
      */
     void write_saved_state_data(void *saved_data);
-    
+
 private :
 
 };

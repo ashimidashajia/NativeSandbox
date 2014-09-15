@@ -5,6 +5,7 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #ifndef GAME_ENGINE_H
 #define GAME_ENGINE_H
 
@@ -42,7 +43,7 @@ private :
 
     /** list of game objects */
     // List<Object> m_objects;;
-        
+
 };
 
 #endif

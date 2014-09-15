@@ -5,6 +5,7 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #ifndef CORE_ENGINE_H
 #define CORE_ENGINE_H
 
@@ -41,7 +42,7 @@ public:
      * Method to handle the application commands, usually linked to the application lifecycle
      */
     void handle_app_command(struct android_app *app, int32_t command);
-    
+
     /**
      * Callback for input events (touch, key).
      * Return 1 to notify that the event was handled internally, or 0 to let the
@@ -57,11 +58,11 @@ private :
     /** The OpenGL engine */
     GLEngine *m_gl_engine;
     /** The Game engine */
-    GameEngine *m_game_engine; 
+    GameEngine *m_game_engine;
     /** The time manager */
     TimeManager *m_time_manager;
     /** the saved state (for seamless app transitions) */
-    SavedState *m_saved_state; 
+    SavedState *m_saved_state;
 
     /**
      * Callback triggered when the user perform a touch event

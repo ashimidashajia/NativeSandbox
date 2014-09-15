@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2014 Xavier Gouchet
- * 
- * This file is licensed under The MIT License (MIT). 
+ *
+ * This file is licensed under The MIT License (MIT).
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
 
@@ -11,11 +11,11 @@
 #include <android/log.h>
 
 /**
- * Define easy proxy Macros to log information in Android's LogCat. 
- * The preprocessor is usefull to remove completely every string sent to the log output. 
- * 
- * The usage is pretty straight forward, for instance 
- * 
+ * Define easy proxy Macros to log information in Android's LogCat.
+ * The preprocessor is usefull to remove completely every string sent to the log output.
+ *
+ * The usage is pretty straight forward, for instance
+ *
  * LOG_D("My tag", "Logging a couple of values : %d, %f", 42, 3.1415f)
  */
 

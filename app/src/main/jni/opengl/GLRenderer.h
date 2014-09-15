@@ -5,6 +5,7 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #ifndef GL_RENDERER_H
 #define GL_RENDERER_H
 
@@ -16,15 +17,16 @@
 class GLRenderer {
 
 public:
-    
+
     /** Destructor */
-    ~GLRenderer() {}
-    
+    ~GLRenderer() {
+    }
+
     /**
      * Initialises the renderer. Returns true if the initialisation was  succesfull
      */
-    virtual bool init() = 0; 
-    
+    virtual bool init() = 0;
+
     /**
      * Draws a single frame
      */
@@ -33,8 +35,9 @@ public:
 protected:
 
     /** Protected constructor */
-    GLRenderer() {}
- 
+    GLRenderer() {
+    }
+
 };
 
 

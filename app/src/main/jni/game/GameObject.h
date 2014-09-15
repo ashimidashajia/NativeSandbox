@@ -5,6 +5,7 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
 
@@ -18,11 +19,11 @@ public:
 
     /** Constructor */
     GameObject();
-    
+
     /** Destructor */
     ~GameObject();
-    
-    
+
+
 private:
 
     // List of components

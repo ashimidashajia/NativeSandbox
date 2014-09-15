@@ -5,6 +5,7 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #ifndef ANDROID_MAIN_H_
 #define ANDROID_MAIN_H_
 
@@ -12,7 +13,7 @@
 #include <android_native_app_glue.h>
 
 extern "C" {
-    
+
 /**
 * This is the main entry point of a native application that is using
 * android_native_app_glue.  It runs in its own thread, with its own

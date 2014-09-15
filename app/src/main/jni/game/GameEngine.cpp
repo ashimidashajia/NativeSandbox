@@ -5,6 +5,7 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #include "GameEngine.h"
 #include "../utils/Logs.h"
 
@@ -22,9 +23,9 @@ GameEngine::~GameEngine() {
 
 void GameEngine::update_game_state(TimeUnit delta_time) {
     LOG_V(TAG, " ❯ android_main(app)");
-    
+
     LOG_V(TAG, "   • delta time %lld", delta_time);
-    
+
     // TODO update some things 
     // foreach (GameObject in m_game_objects) {
     //      object->update(delta_time);

@@ -1,10 +1,10 @@
 /**
  * Copyright (c) 2014 Xavier Gouchet
- * 
- * This file is licensed under The MIT License (MIT). 
+ *
+ * This file is licensed under The MIT License (MIT).
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
- 
+
 #include "GLEngine.h"
 #include "GLES2Renderer.h"
 #include "../utils/Logs.h"
@@ -22,7 +22,7 @@ GLEngine::GLEngine() {
     m_display = EGL_NO_DISPLAY;
     m_context = EGL_NO_CONTEXT;
     m_surface = EGL_NO_SURFACE;
-    
+
     m_renderer = NULL;
 }
 
@@ -33,8 +33,8 @@ GLEngine::~GLEngine() {
 /**
  * Prints the GL String corresponding to the identifier, prefixed by the given name
  */
-void GLEngine::print_gl_string(const char* name, GLenum identifier) {
-    const char* value = (const char*) glGetString(identifier);
+void GLEngine::print_gl_string(const char *name, GLenum identifier) {
+    const char *value = (const char *) glGetString(identifier);
     LOG_D(TAG, "   • %s => %s", name, value);
 }
 
@@ -50,7 +50,7 @@ void GLEngine::init_display(ANativeWindow *window) {
     EGLSurface surface;
     EGLContext context;
     EGLDisplay display;
-    
+
     // Specifies the requirements for the display we want
     const EGLint requirements[] = {
             EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
@@ -59,7 +59,7 @@ void GLEngine::init_display(ANativeWindow *window) {
             EGL_RED_SIZE, 8,
             EGL_NONE
     };
-    
+
     // get the default display
     display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     eglInitialize(display, 0, 0);
@@ -99,29 +99,29 @@ void GLEngine::init_display(ANativeWindow *window) {
  * Initialises the Open GL ES context.
  */
 void GLEngine::init_gl_context() {
-    
+
     // print out some info 
     print_gl_string("Version", GL_VERSION);
     print_gl_string("Vendor", GL_VENDOR);
     print_gl_string("Renderer", GL_RENDERER);
     print_gl_string("Extensions", GL_EXTENSIONS);
-    
+
     // Check the OpenGL ES version
-    const char* version = (const char*) glGetString(GL_VERSION);
+    const char *version = (const char *) glGetString(GL_VERSION);
     if (strstr(version, "OpenGL ES 3.") || strstr(version, "OpenGL ES 2.")) {
         m_renderer = new GLES2Renderer();
-        
+
         // make sure we initialise it properly    
         if (!m_renderer->init()) {
             delete m_renderer;
             m_renderer = NULL;
         }
-    
+
     } else {
         LOG_E(TAG, "   • Unsupported OpenGL ES version : %s", version);
     }
 }
- 
+
 
 /**
  * Destroys and cleans the OpenGL and EGL states to release the display
@@ -139,7 +139,7 @@ void GLEngine::terminate_display() {
         if (m_surface != EGL_NO_SURFACE) {
             eglDestroySurface(m_display, m_surface);
         }
-        
+
         eglTerminate(m_display);
     }
 
@@ -161,9 +161,9 @@ void GLEngine::draw_frame() {
     }
 
     // make the renderer draw a frame 
-    if (m_renderer){
+    if (m_renderer) {
         m_renderer->draw_frame();
-        
+
         // Swap the display and surface buffer
         if (eglSwapBuffers(m_display, m_surface)) {
             LOG_V(TAG, "   • buffers swapped");

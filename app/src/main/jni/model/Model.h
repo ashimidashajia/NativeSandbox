@@ -5,6 +5,7 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #ifndef MODEL_H
 #define MODEL_H
 
@@ -23,35 +24,35 @@ public:
 
     /** Constructor */
     Model();
-    
+
     /** Destructor */
     ~Model();
 
-    /** 
-     * Initialises the shader. 
-     * Returns true if the initialization was succesfully. 
-     */
-    bool init_shader(const char* vs_source, const char* fs_source);
-    
     /**
-     * Initializes the geometry with the given Vertices array. 
-     * Returns true if the initialization was succesfully. 
+     * Initialises the shader.
+     * Returns true if the initialization was succesfully.
+     */
+    bool init_shader(const char *vs_source, const char *fs_source);
+
+    /**
+     * Initializes the geometry with the given Vertices array.
+     * Returns true if the initialization was succesfully.
      */
     bool init_geometry(Vertex *vertices, int vertices_count, GLenum mode);
-    
-    /** 
+
+    /**
      * Renders the object
      */
-     virtual void render(); 
-    
+    virtual void render();
+
 private:
 
     /** the geometry */
-    Geometry *m_geometry; 
-    
+    Geometry *m_geometry;
+
     /** the shader */
-    Shader * m_shader;   
-    
+    Shader *m_shader;
+
     /** the shader attributes */
     GLint m_pos_attrib;
     GLint m_color_attrib;

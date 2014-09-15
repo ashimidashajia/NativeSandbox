@@ -5,6 +5,7 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
+
 #ifndef GAME_WORLD_H
 #define GAME_WORLD_H
 
@@ -18,15 +19,15 @@ public:
 
     /** Constructor */
     GameWorld();
-    
+
     /** Destructor */
     ~GameWorld();
-    
-    
+
+
 private:
 
     // TODO make generic lists, queues, ... 
-  
+
 };
 
 #endif

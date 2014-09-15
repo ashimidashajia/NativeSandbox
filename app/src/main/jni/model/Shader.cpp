@@ -9,13 +9,13 @@
 #include "../opengl/GLUtils.h"
 
 /** Constructor */
-Shader::Shader(){
-    m_program = 0; 
+Shader::Shader() {
+    m_program = 0;
 }
 
 /** Destructor */
-Shader::~Shader(){
-    if (m_program){
+Shader::~Shader() {
+    if (m_program) {
         glDeleteProgram(m_program);
     }
 }
@@ -23,14 +23,14 @@ Shader::~Shader(){
 /**
  * Initialises the shader. Returns true if the initialisation was  succesfull
  */
-bool Shader::init(const char* vs_source, const char* fs_source){
-    
+bool Shader::init(const char *vs_source, const char *fs_source) {
+
     // compile the shader programs 
     m_program = create_program(VS_DEFAULT, FS_DEFAULT);
-    if (!m_program){
+    if (!m_program) {
         return false;
     }
-    
+
     // retrieve the shader attributes 
     m_pos_attrib = glGetAttribLocation(m_program, "pos");
     m_color_attrib = glGetAttribLocation(m_program, "color");
@@ -42,20 +42,20 @@ bool Shader::init(const char* vs_source, const char* fs_source){
 /**
  * Sets this Shader as the active one for the next renderings to be done
  */
-void Shader::set_active(){
-    if (m_program){
+void Shader::set_active() {
+    if (m_program) {
         glUseProgram(m_program);
     }
 }
 
-/** 
+/**
  * Returns the vertex array position attribute index (or -1)
  */
 GLint Shader::get_position_attrib() {
     return m_pos_attrib;
 }
 
-/** 
+/**
  * Returns the vertex array color attribute index (or -1)
  */
 GLint Shader::get_color_attrib() {
