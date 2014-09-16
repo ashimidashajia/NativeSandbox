@@ -15,14 +15,12 @@
 
 /** Constructor */
 GLES2Renderer::GLES2Renderer() {
-    m_shader = NULL;
+    m_model = new Model();
 }
 
 /** Destructor */
 GLES2Renderer::~GLES2Renderer() {
-    if (m_shader) {
-        delete m_shader;
-    }
+    delete m_model;
 }
 
 /**
@@ -38,6 +36,7 @@ bool GLES2Renderer::init() {
     glCullFace(GL_BACK);
 
     // TODO foreach renderable  : renderable.init
+
 
     return true;
 }

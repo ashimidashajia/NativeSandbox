@@ -12,7 +12,7 @@
 
 /** Constructor */
 CoreEngine::CoreEngine() {
-    m_game_engine = new GameEngine();
+    m_behavior_engine = new BehaviorEngine();
     m_gl_engine = new GLEngine();
     m_time_manager = new TimeManager();
     m_saved_state = new SavedState();
@@ -21,7 +21,7 @@ CoreEngine::CoreEngine() {
 
 /** Destructor */
 CoreEngine::~CoreEngine() {
-    delete m_game_engine;
+    delete m_behavior_engine;
     delete m_gl_engine;
     delete m_time_manager;
     delete m_saved_state;
@@ -203,12 +203,14 @@ void CoreEngine::main_loop(struct android_app *app) {
             return;
         }
 
-        // 3 : TODO update game system
-        m_game_engine->update_game_state(m_time_manager->get_delta_time_nano());
+        // 3 : update system
+        m_behavior_engine->update_state(m_time_manager->get_delta_time_nano());
 
 
         // 4 : update rendering
+        m_behavior_engine->pre_render();
         m_gl_engine->draw_frame();
+        m_behavior_engine->post_render();
 
         // 5 : Compute the sleep time
         initial_step_time = m_time_manager->get_time_nano() - loop_begin_time;
@@ -221,12 +223,12 @@ void CoreEngine::main_loop(struct android_app *app) {
         }
 
         // 6b : we have an overhead, so we need to catch up
-        // we'll force as many game update as the number of frames we missed (supposedly)
+        // we'll force as many updates as the number of frames we missed (supposedly)
         // but will only catch up as much as MAX_FRAME_SKIPPED frames
         while ((sleep_time.tv_nsec < 0) && (frames_skipped < MAX_FRAME_SKIPPED)) {
             LOG_D(TAG, "   • Catching up on missed frames");
 
-            m_game_engine->update_game_state(m_time_manager->get_delta_time_nano());
+            m_behavior_engine->update_state(m_time_manager->get_delta_time_nano());
 
             // add frame period to check if we get to thein next frame
             sleep_time.tv_nsec += FRAME_PERIOD_NANO;

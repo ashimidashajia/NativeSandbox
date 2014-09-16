@@ -10,7 +10,7 @@
 #define CORE_ENGINE_H
 
 #include "../opengl/GLEngine.h"
-#include "../game/GameEngine.h"
+#include "../behavior/BehaviorEngine.h"
 #include "TimeManager.h"
 #include "SavedState.h"
 
@@ -57,8 +57,8 @@ private :
 
     /** The OpenGL engine */
     GLEngine *m_gl_engine;
-    /** The Game engine */
-    GameEngine *m_game_engine;
+    /** The behavior engine */
+    BehaviorEngine *m_behavior_engine;
     /** The time manager */
     TimeManager *m_time_manager;
     /** the saved state (for seamless app transitions) */

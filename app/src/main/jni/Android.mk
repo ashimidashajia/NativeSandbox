@@ -30,11 +30,12 @@ LOCAL_SRC_FILES += opengl/GLUtils.cpp
 LOCAL_SRC_FILES += opengl/GLEngine.cpp
 LOCAL_SRC_FILES += opengl/GLES2Renderer.cpp
 
-LOCAL_SRC_FILES += model/Shader.cpp
-LOCAL_SRC_FILES += model/Geometry.cpp
-LOCAL_SRC_FILES += model/Model.cpp
+LOCAL_SRC_FILES += render/Shader.cpp
+LOCAL_SRC_FILES += render/Geometry.cpp
+LOCAL_SRC_FILES += render/Model.cpp
 
-LOCAL_SRC_FILES += game/GameEngine.cpp
+LOCAL_SRC_FILES += behavior/BehaviorEngine.cpp
+LOCAL_SRC_FILES += behavior/BehavioralObject.cpp
 
 # configure the module
 LOCAL_PATH := $(TOP_LOCAL_PATH)

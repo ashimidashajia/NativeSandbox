@@ -228,9 +228,7 @@ void GLEngine::draw_frame() {
         m_renderer->draw_frame();
 
         // Swap the display and surface buffer
-        if (eglSwapBuffers(m_display, m_surface)) {
-            LOG_V(TAG, "   • buffers swapped");
-        } else {
+        if (!eglSwapBuffers(m_display, m_surface)) {
             LOG_W(TAG, "   • swap failed");
         }
     } else {
