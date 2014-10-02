@@ -10,54 +10,69 @@
 
 /** Constructor */
 Shader::Shader() {
-    m_program = 0;
+    mProgramHandle = 0;
+    mPositionAttributeHandle = -1;
+    mViewProjMatrixUniformHandle = -1;
+    mModelMatrixUniformHandle = -1;
+    mDiffuseColorUniformHandle = -1;
 }
 
 /** Destructor */
 Shader::~Shader() {
-    if (m_program) {
-        glDeleteProgram(m_program);
+    if (mProgramHandle) {
+        glDeleteProgram(mProgramHandle);
     }
 }
 
 /**
  * Initialises the shader. Returns true if the initialisation was  succesfull
  */
-bool Shader::init(const char *vs_source, const char *fs_source) {
+bool Shader::init(const char *vsSource, const char *fsSource) {
 
     // compile the shader programs 
-    m_program = create_program(VS_DEFAULT, FS_DEFAULT);
-    if (!m_program) {
+    mProgramHandle = createProgram(VS_DEFAULT, FS_DEFAULT);
+    if (!mProgramHandle) {
         return false;
     }
 
-    // retrieve the shader attributes 
-    m_pos_attrib = glGetAttribLocation(m_program, "pos");
-    m_color_attrib = glGetAttribLocation(m_program, "color");
-    // mScaleRotUniform = glGetUniformLocation(m_program, "scaleRot");
-    // mOffsetUniform = glGetUniformLocation(m_program, "offset");
 
+    // retrieve the shader attributes handles
+    mPositionAttributeHandle = glGetAttribLocation(mProgramHandle, "aPosition");
+  
+    // retrieve the shader uniform handles
+    mViewProjMatrixUniformHandle = glGetUniformLocation(mProgramHandle, "uVPMatrix");
+    mModelMatrixUniformHandle = glGetUniformLocation(mProgramHandle, "uMMatrix");
+    mDiffuseColorUniformHandle = glGetUniformLocation(mProgramHandle, "uDiffuse");
+
+    return true;
 }
 
 /**
  * Sets this Shader as the active one for the next renderings to be done
  */
-void Shader::set_active() {
-    if (m_program) {
-        glUseProgram(m_program);
+void Shader::setActive() {
+    if (mProgramHandle) {
+        glUseProgram(mProgramHandle);
     }
 }
 
 /**
- * Returns the vertex array position attribute index (or -1)
+ * Returns the Vertex Position attribute handle
  */
-GLint Shader::get_position_attrib() {
-    return m_pos_attrib;
+GLint Shader::getPositionAttributeHandle(){
+    return mPositionAttributeHandle;
 }
 
 /**
- * Returns the vertex array color attribute index (or -1)
+ * Returns the View Projection matrix uniform handle
  */
-GLint Shader::get_color_attrib() {
-    return m_color_attrib;
+GLint Shader::getViewProjMatrixUniformHandle() {
+    return mViewProjMatrixUniformHandle;
+}
+
+/**
+ * Returns the Model matrix uniform handle
+ */
+GLint Shader::getModelMatrixUniformHandle() {
+    return mModelMatrixUniformHandle;
 }

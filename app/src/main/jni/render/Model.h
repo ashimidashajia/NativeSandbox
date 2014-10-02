@@ -10,6 +10,7 @@
 #define MODEL_H
 
 #include <GLES2/gl2.h>
+#include "../component/Transform.h"
 #include "Renderable.h"
 #include "Geometry.h"
 #include "Shader.h"
@@ -27,35 +28,50 @@ public:
 
     /** Destructor */
     ~Model();
+    
+    
+    /**
+     * Initializes the object
+     */
+    virtual void init() = 0;
+    
+    /**
+     * Renders the object
+     */
+    virtual void render(Environment *env);
+    
+    /**
+     * Called when this component is attached to an object. The parent object is accesible in the 
+     * mObject field from now on. 
+     */
+    virtual void onAttached();
+    
+    
+protected:
 
     /**
      * Initialises the shader.
      * Returns true if the initialization was succesfully.
      */
-    bool init_shader(const char *vs_source, const char *fs_source);
-
+    bool initShader(const char *vsSource, const char *fsSource);
+    
+    
     /**
-     * Initializes the geometry with the given Vertices array.
+     * Initializes the geometry with the given vertex array.
      * Returns true if the initialization was succesfully.
      */
-    bool init_geometry(Vertex *vertices, int vertices_count, GLenum mode);
-
-    /**
-     * Renders the object
-     */
-    virtual void render();
+    bool initGeometry(GLfloat *vertices, int vtxCount, unsigned short vtxMask, GLubyte *indices, int idxCount, GLenum mode);
 
 private:
 
+    /** the Transform */
+    Transform *mTransform;
+
     /** the geometry */
-    Geometry *m_geometry;
+    Geometry *mGeometry;
 
     /** the shader */
-    Shader *m_shader;
-
-    /** the shader attributes */
-    GLint m_pos_attrib;
-    GLint m_color_attrib;
+    Shader *mShader;
 };
 
 #endif

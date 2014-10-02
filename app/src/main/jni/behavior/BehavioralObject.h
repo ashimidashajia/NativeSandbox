@@ -10,6 +10,11 @@
 #define BEHAVIORAL_OBJECT_H
 
 #include "Component.h"
+#include "BehaviorEngine.h"
+
+// Double include loop 
+class BehaviorEngine;
+class Component;
 
 /**
  * The BehavioralObject class represents an object which as (at least one of) : 
@@ -29,9 +34,11 @@ public:
     ~BehavioralObject();
     
     /** adds a component to this game object */
-    void add_component(Component *component);
+    void addComponent(Component *component);
 
 private:
+
+    BehaviorEngine *mEngine; 
 
     // List of components
 };

@@ -19,19 +19,19 @@ SavedState::~SavedState() {
 /**
  * Gets the size to allocate for the saved state.
  */
-size_t SavedState::get_saved_state_size() {
+size_t SavedState::getSize() {
     return 0;
 }
 
 /**
  * Reads the saved data from the given pointer.
  */
-void SavedState::read_saved_state_data(void *saved_data, size_t saved_data_size) {
+void SavedState::read(void *data, size_t size) {
 }
 
 /**
  * Writes the saved data into the given pointer.
- * The memory has already been allocated according to get_saved_state_size().
+ * The memory has already been allocated according to getSize().
  */
-void SavedState::write_saved_state_data(void *saved_data) {
+void SavedState::write(void *data) {
 }

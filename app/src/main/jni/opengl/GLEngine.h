@@ -32,38 +32,38 @@ public:
     /**
      * Initialises the EGL interface and bind it to the application's window
      */
-    void init_display(ANativeWindow *window);
+    void initDisplay(ANativeWindow *window);
 
 
     /**
      * Destroys and cleans the OpenGL and EGL states to release the display
      */
-    void terminate_display();
+    void terminateDisplay();
 
     /**
      * Renders a single frame on the current display
      */
-    void draw_frame();
+    void drawFrame();
 
 private :
 
     /** The Open GL Renderer */
-    GLRenderer *m_renderer;
+    GLRenderer *mRenderer;
 
     /** The front buffer */
-    EGLDisplay m_display;
+    EGLDisplay mDisplay;
     /** The back buffer */
-    EGLSurface m_surface;
+    EGLSurface mSurface;
     /** The EGL context */
-    EGLContext m_context;
+    EGLContext mContext;
 
     /** The surface's size */
-    int32_t m_width, m_height;
+    int32_t mWidth, mHeight;
 
     /**
      * Initialises the Open GL ES context.
      */
-    void init_gl_context();
+    void initGLContext();
 
 };
 

@@ -20,14 +20,14 @@
 /** Constructor */
 GLEngine::GLEngine() {
 
-    m_width = 0;
-    m_height = 0;
+    mWidth = 0;
+    mHeight = 0;
 
-    m_display = EGL_NO_DISPLAY;
-    m_context = EGL_NO_CONTEXT;
-    m_surface = EGL_NO_SURFACE;
+    mDisplay = EGL_NO_DISPLAY;
+    mContext = EGL_NO_CONTEXT;
+    mSurface = EGL_NO_SURFACE;
 
-    m_renderer = NULL;
+    mRenderer = NULL;
 }
 
 /** Destructor */
@@ -37,8 +37,8 @@ GLEngine::~GLEngine() {
 /**
  * Initialises the EGL interface and bind it to the application's window.
  */
-void GLEngine::init_display(ANativeWindow *window) {
-    LOG_D(TAG, " ❯ init_display(window)");
+void GLEngine::initDisplay(ANativeWindow *window) {
+    LogD(TAG, " ❯ initDisplay(window)");
 
     EGLint width, height, dummy;
 
@@ -48,14 +48,14 @@ void GLEngine::init_display(ANativeWindow *window) {
     eglInitialize(display, 0, 0);
 
 #ifdef DISPLAY_INFOS
-    print_egl_string(display, "EGL Client APIs", EGL_CLIENT_APIS);
-    print_egl_string(display, "EGL Vendor", EGL_VENDOR);
-    print_egl_string(display, "EGL Version", EGL_VERSION);
-    print_egl_string(display, "EGL Extensions", EGL_EXTENSIONS);
+    printEGLString(display, "EGL Client APIs", EGL_CLIENT_APIS);
+    printEGLString(display, "EGL Vendor", EGL_VENDOR);
+    printEGLString(display, "EGL Version", EGL_VERSION);
+    printEGLString(display, "EGL Extensions", EGL_EXTENSIONS);
 #endif
 
     // Specifies the requirements for the display we want
-    const EGLint attrib_list[] = {
+    const EGLint attribList[] = {
             EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
             EGL_BLUE_SIZE, 8,
@@ -70,47 +70,47 @@ void GLEngine::init_display(ANativeWindow *window) {
 #ifdef DISPLAY_ALL_CONFIG
 
     // get the number of configs matching the requirements
-    EGLint num_configs;
-    eglChooseConfig(display, attrib_list, NULL, 0, &num_configs);
-    LOG_D(TAG, "   • %d EGL configurations found", num_configs);
+    EGLint numConfigs;
+    eglChooseConfig(display, attribList, NULL, 0, &numConfigs);
+    LogD(TAG, "   • %d EGL configurations found", numConfigs);
 
     // find matching configurations
-    EGLConfig configs[num_configs];
-    eglChooseConfig(display, attrib_list, configs, num_configs, &num_configs);
+    EGLConfig configs[numConfigs];
+    eglChooseConfig(display, attribList, configs, numConfigs, &numConfigs);
 
     // Display each config infos
-    EGLint renderable_type = 0, surface_type = 0, transparent_type = 0, colorbuffer_type = 0;
-    EGLint depth_size = 0, stencil_size = 0;
-    for(int i = 0; i < num_configs; ++i){
+    EGLint renderableType = 0, surfaceType = 0, transparentType = 0, colorBufferType = 0;
+    EGLint depthSize = 0, stencilSize = 0;
+    for(int i = 0; i < numConfigs; ++i){
 
-        eglGetConfigAttrib(display, configs[i], EGL_RENDERABLE_TYPE, &renderable_type);
-        eglGetConfigAttrib(display, configs[i], EGL_SURFACE_TYPE, &surface_type);
-        eglGetConfigAttrib(display, configs[i], EGL_TRANSPARENT_TYPE, &transparent_type);
-        eglGetConfigAttrib(display, configs[i], EGL_COLOR_BUFFER_TYPE, &colorbuffer_type);
+        eglGetConfigAttrib(display, configs[i], EGL_RENDERABLE_TYPE, &renderableType);
+        eglGetConfigAttrib(display, configs[i], EGL_SURFACE_TYPE, &surfaceType);
+        eglGetConfigAttrib(display, configs[i], EGL_TRANSPARENT_TYPE, &transparentType);
+        eglGetConfigAttrib(display, configs[i], EGL_COLOR_BUFFER_TYPE, &colorBufferType);
 
-        eglGetConfigAttrib(display, configs[i], EGL_DEPTH_SIZE, &depth_size);
-        eglGetConfigAttrib(display, configs[i], EGL_STENCIL_SIZE, &stencil_size);
+        eglGetConfigAttrib(display, configs[i], EGL_DEPTH_SIZE, &depthSize);
+        eglGetConfigAttrib(display, configs[i], EGL_STENCIL_SIZE, &stencilSize);
 
 
-        LOG_D(TAG, "   • Configuration [%i] : ", i);
-        LOG_D(TAG, "         renderable type = 0x%08x", renderable_type);
-        LOG_D(TAG, "            surface type = %d", surface_type);
-        LOG_D(TAG, "        transparent type = %d", transparent_type);
-        LOG_D(TAG, "       color buffer type = %d", colorbuffer_type);
+        LogD(TAG, "   • Configuration [%i] : ", i);
+        LogD(TAG, "         renderable type = 0x%08x", renderableType);
+        LogD(TAG, "            surface type = %d", surfaceType);
+        LogD(TAG, "        transparent type = %d", transparentType);
+        LogD(TAG, "       color buffer type = %d", colorBufferType);
 
-        LOG_D(TAG, "              depth size = %d", depth_size);
-        LOG_D(TAG, "            stencil size = %d", stencil_size);
+        LogD(TAG, "              depth size = %d", depthSize);
+        LogD(TAG, "            stencil size = %d", stencilSize);
     }
 
 #else
 
-    EGLint num_configs;
+    EGLint numConfigs;
 
 #endif
 
     // Automatic get config
     EGLConfig config;
-    eglChooseConfig(display, attrib_list, &config, 1, &num_configs);
+    eglChooseConfig(display, attribList, &config, 1, &numConfigs);
 
     // Update the window format from the configuration
     EGLint format;
@@ -120,67 +120,66 @@ void GLEngine::init_display(ANativeWindow *window) {
     // create the surface
     EGLSurface surface = eglCreateWindowSurface(display, config, window, NULL);
     if (surface == EGL_NO_SURFACE){
-        LOG_E(TAG, "   • Unable to create egl surface");
+        LogE(TAG, "   • Unable to create egl surface");
         return;
     }
 
     // Create the context
-    const EGLint context_attrib_list[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
-    EGLContext context = eglCreateContext(display, config, NULL, context_attrib_list);
+    const EGLint contextAttribList[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
+    EGLContext context = eglCreateContext(display, config, NULL, contextAttribList);
     if (context == EGL_NO_CONTEXT){
         EGLint error = eglGetError();
-        LOG_E(TAG, "   • Unable to create egl context : 0x%08x", error);
-
+        LogE(TAG, "   • Unable to create egl context : 0x%08x", error);
         return;
     }
 
     // binds the EGL context to the surface
     if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-        LOG_E(TAG, "   • Unable to eglMakeCurrent");
+        LogE(TAG, "   • Unable to eglMakeCurrent");
         return;
     }
 
     // get the surface width / height
-    eglQuerySurface(display, surface, EGL_WIDTH, &m_width);
-    eglQuerySurface(display, surface, EGL_HEIGHT, &m_height);
-    LOG_D(TAG, "   • Surface : %d x %d", m_width, m_height);
+    eglQuerySurface(display, surface, EGL_WIDTH, &mWidth);
+    eglQuerySurface(display, surface, EGL_HEIGHT, &mHeight);
+    LogD(TAG, "   • Surface : %d x %d", mWidth, mHeight);
 
-    m_display = display;
-    m_surface = surface;
-    m_context = context;
+    mDisplay = display;
+    mSurface = surface;
+    mContext = context;
 
     // init the GL context
-    init_gl_context();
+    initGLContext();
 }
 
 /**
  * Initialises the Open GL ES context.
  */
-void GLEngine::init_gl_context() {
+void GLEngine::initGLContext() {
 
 #ifdef DISPLAY_INFOS
-    print_gl_string("Open GL Version", GL_VERSION);
-    print_gl_string("Open GL Vendor", GL_VENDOR);
-    print_gl_string("Open GL Renderer", GL_RENDERER);
-    print_gl_string("Open GL Extensions", GL_EXTENSIONS);
+    printGLString("Open GL Version", GL_VERSION);
+    printGLString("Open GL Vendor", GL_VENDOR);
+    printGLString("Open GL Renderer", GL_RENDERER);
+    printGLString("Open GL Extensions", GL_EXTENSIONS);
 #endif
 
     // Check the OpenGL ES version
     const char *version = (const char *) glGetString(GL_VERSION);
     if (strstr(version, "OpenGL ES 2.")) {
-        m_renderer = new GLES2Renderer();
+        mRenderer = new GLES2Renderer();
     } else if (strstr(version, "OpenGL ES 3.")){
-        m_renderer = new GLES2Renderer();
+        mRenderer = new GLES2Renderer();
     } else {
-        m_renderer = NULL;
-        LOG_W(TAG, "   • OpenGL version not compatible (%s)", version);
+        mRenderer = NULL;
+        LogW(TAG, "   • OpenGL version not compatible (%s)", version);
     }
 
-    if (m_renderer) {
+    if (mRenderer) {
         // make sure we initialise it properly
-        if (!m_renderer->init()) {
-            delete m_renderer;
-            m_renderer = NULL;
+        if (!mRenderer->init(mWidth, mHeight)) {
+            delete mRenderer;
+            mRenderer = NULL;
         }
     }
 }
@@ -189,50 +188,50 @@ void GLEngine::init_gl_context() {
 /**
  * Destroys and cleans the OpenGL and EGL states to release the display
  */
-void GLEngine::terminate_display() {
+void GLEngine::terminateDisplay() {
 
-    if (m_display != EGL_NO_DISPLAY) {
+    if (mDisplay != EGL_NO_DISPLAY) {
 
         // make sure the display is current 
-        eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
-        if (m_context != EGL_NO_CONTEXT) {
-            eglDestroyContext(m_display, m_context);
+        if (mContext != EGL_NO_CONTEXT) {
+            eglDestroyContext(mDisplay, mContext);
         }
-        if (m_surface != EGL_NO_SURFACE) {
-            eglDestroySurface(m_display, m_surface);
+        if (mSurface != EGL_NO_SURFACE) {
+            eglDestroySurface(mDisplay, mSurface);
         }
 
-        eglTerminate(m_display);
+        eglTerminate(mDisplay);
     }
 
-    m_display = EGL_NO_DISPLAY;
-    m_context = EGL_NO_CONTEXT;
-    m_surface = EGL_NO_SURFACE;
+    mDisplay = EGL_NO_DISPLAY;
+    mContext = EGL_NO_CONTEXT;
+    mSurface = EGL_NO_SURFACE;
 }
 
 /**
  * Renders a single frame on the current display
  */
-void GLEngine::draw_frame() {
+void GLEngine::drawFrame() {
 
-    LOG_D(TAG, " ❯ draw_frame()");
+    LogD(TAG, " ❯ drawFrame()");
 
-    if (m_display == NULL) {
-        LOG_W(TAG, "   • no display");
+    if (mDisplay == NULL) {
+        LogW(TAG, "   • no display");
         return;
     }
 
     // make the renderer draw a frame 
-    if (m_renderer) {
-        m_renderer->draw_frame();
+    if (mRenderer) {
+        mRenderer->drawFrame();
 
         // Swap the display and surface buffer
-        if (!eglSwapBuffers(m_display, m_surface)) {
-            LOG_W(TAG, "   • swap failed");
+        if (!eglSwapBuffers(mDisplay, mSurface)) {
+            LogW(TAG, "   • swap failed");
         }
     } else {
-        LOG_W(TAG, "   • no renderer");
+        LogW(TAG, "   • no renderer");
     }
 }
 

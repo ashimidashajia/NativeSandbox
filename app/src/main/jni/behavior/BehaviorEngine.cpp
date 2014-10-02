@@ -22,12 +22,12 @@ BehaviorEngine::~BehaviorEngine() {
 /**
  * Method to update the whole behavioral state
  */
-void BehaviorEngine::update_state(TimeUnit delta_time) {
-    LOG_V(TAG, " ❯ update_state(%lld)", delta_time);
+void BehaviorEngine::updateState(TimeUnit deltaTime) {
+    LogV(TAG, " ❯ updateState(%lld)", deltaTime);
 
     // TODO update some things 
-    // foreach (GameComponent in m_game_objects) {
-    //      object->update(delta_time);
+    // foreach (GameComponent in mGameObjects) {
+    //      object->update(deltaTime);
     // }
 }
 
@@ -35,20 +35,20 @@ void BehaviorEngine::update_state(TimeUnit delta_time) {
 /**
  * Method to clean up everything at the start of a new frame
  */
-void BehaviorEngine::start_frame() {
+void BehaviorEngine::startFrame() {
     // TODO update some things 
 }
 
 /**
  * Called just before rendering a frame
  */
-void BehaviorEngine::pre_render() {
+void BehaviorEngine::preRender() {
     // TODO update some things 
 }
 
 /**
  * Called just after rendering a frame
  */
-void BehaviorEngine::post_render() {
+void BehaviorEngine::postRender() {
     // TODO update some things 
 }

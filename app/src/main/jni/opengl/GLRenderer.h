@@ -5,7 +5,6 @@
  * For more information, check the "LICENSE" file available in the root directory of this project.
  */
  
-
 #ifndef GL_RENDERER_H
 #define GL_RENDERER_H
 
@@ -25,12 +24,12 @@ public:
     /**
      * Initialises the renderer. Returns true if the initialisation was  succesfull
      */
-    virtual bool init() = 0;
+    virtual bool init(int width, int height) = 0;
 
     /**
      * Draws a single frame
      */
-    virtual void draw_frame() = 0;
+    virtual void drawFrame() = 0;
 
 protected:
 

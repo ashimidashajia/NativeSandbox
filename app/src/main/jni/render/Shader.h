@@ -16,23 +16,24 @@
  */
 static const char VS_DEFAULT[] =
         "#version 100\n"
-                "uniform mat2 scaleRot;\n"
-                "uniform vec2 offset;\n"
-                "attribute vec2 pos;\n"
-                "attribute vec4 color;\n"
-                "varying vec4 vColor;\n"
-                "void main() {\n"
-                "    gl_Position = vec4(scaleRot*pos + offset, 0.0, 1.0);\n"
-                "    vColor = color;\n"
-                "}\n";
+        "\n"
+        "uniform mat4 uMMatrix;\n"
+        "uniform mat4 uVPMatrix;\n"
+        "uniform vec4 uDiffuse;\n"
+        "attribute vec3 aPosition;\n"
+        "varying vec4 vColor;\n"
+        "void main() {\n"
+        "    gl_Position = (uVPMatrix * uMMatrix) * vec4(aPosition, 0);\n"
+        "    vColor = vec4(1, 1, 1, 1);"
+        "}\n";
 
 static const char FS_DEFAULT[] =
         "#version 100\n"
-                "precision mediump float;\n"
-                "varying vec4 vColor;\n"
-                "void main() {\n"
-                "    gl_FragColor = vColor;\n"
-                "}\n";
+        "precision mediump float;\n"
+        "varying vec4 vColor;\n"
+        "void main() {\n"
+        "    gl_FragColor = vColor;\n"
+        "}\n";
 
 /**
  * The Shader class handles the compilation and communication with a shader program
@@ -50,34 +51,40 @@ public:
     /**
      * Initialises the shader. Returns true if the initialisation was  succesfull
      */
-    bool init(const char *vs_source, const char *fs_source);
+    bool init(const char *vsSource, const char *fsSource);
 
     /**
      * Sets this Shader as the active one for the next renderings to be done
      */
-    void set_active();
-
+    void setActive();
+    
     /**
-     * Returns the vertex array position attribute index (or -1)
+     * Returns the Vertex Position attribute handle
      */
-    GLint get_position_attrib();
-
+    GLint getPositionAttributeHandle();
+    
     /**
-     * Returns the vertex array color attribute index (or -1)
+     * Returns the VP matrix uniform handle
      */
-    GLint get_color_attrib();
-
+    GLint getViewProjMatrixUniformHandle();
+    
+    /**
+     * Returns the VP matrix uniform handle
+     */
+    GLint getModelMatrixUniformHandle();
+    
 private:
 
+
+
     /** the id of the shader program */
-    GLuint m_program;
+    GLuint mProgramHandle;
 
-    /** the shader attributes */
-    GLint m_pos_attrib;
-    GLint m_color_attrib;
+    /** the shader attributes handles */
+    GLint mPositionAttributeHandle;
 
-    //GLint mScaleRotUniform;
-    //GLint mOffsetUniform;
+    /** the shader uniform params */
+    GLint mViewProjMatrixUniformHandle, mModelMatrixUniformHandle, mDiffuseColorUniformHandle;
 
 };
 

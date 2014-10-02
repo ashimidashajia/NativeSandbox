@@ -21,8 +21,8 @@ class TimeManager {
 
 private :
 
-    /** the last time get_delta_time_nano() was called */
-    TimeUnit m_last_update_time;
+    /** the last time getDeltaTimeNano() was called */
+    TimeUnit mLastUpdateTime;
 
 
 public:
@@ -36,12 +36,12 @@ public:
     /**
      * Get the current time in nanoseconds 
      */
-    TimeUnit get_time_nano();
+    TimeUnit getTimeNano();
 
     /**
      * Get the elapsed time since the last game update
      */
-    TimeUnit get_delta_time_nano();
+    TimeUnit getDeltaTimeNano();
 
 };
 

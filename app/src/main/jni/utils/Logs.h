@@ -16,24 +16,24 @@
  *
  * The usage is pretty straight forward, for instance
  *
- * LOG_D("My tag", "Logging a couple of values : %d, %f", 42, 3.1415f)
+ * LogD("My tag", "Logging a couple of values : %d, %f", 42, 3.1415f)
  */
 
 #ifdef LOGCAT 
 
-#define LOG_V(tag, ...) __android_log_print(ANDROID_LOG_VERBOSE,  tag, __VA_ARGS__);
-#define LOG_D(tag, ...) __android_log_print(ANDROID_LOG_DEBUG,    tag, __VA_ARGS__);
-#define LOG_I(tag, ...) __android_log_print(ANDROID_LOG_INFO,     tag, __VA_ARGS__);
-#define LOG_W(tag, ...) __android_log_print(ANDROID_LOG_WARN,     tag, __VA_ARGS__);
-#define LOG_E(tag, ...) __android_log_print(ANDROID_LOG_ERROR,    tag, __VA_ARGS__);
+#define LogV(tag, ...) __android_log_print(ANDROID_LOG_VERBOSE,  tag, __VA_ARGS__);
+#define LogD(tag, ...) __android_log_print(ANDROID_LOG_DEBUG,    tag, __VA_ARGS__);
+#define LogI(tag, ...) __android_log_print(ANDROID_LOG_INFO,     tag, __VA_ARGS__);
+#define LogW(tag, ...) __android_log_print(ANDROID_LOG_WARN,     tag, __VA_ARGS__);
+#define LogE(tag, ...) __android_log_print(ANDROID_LOG_ERROR,    tag, __VA_ARGS__);
 
 #else
 
-#define LOG_V(...)
-#define LOG_D(...)
-#define LOG_I(...)
-#define LOG_W(...)
-#define LOG_E(...)
+#define LogV(...)
+#define LogD(...)
+#define LogI(...)
+#define LogW(...)
+#define LogE(...)
 
 #endif
 

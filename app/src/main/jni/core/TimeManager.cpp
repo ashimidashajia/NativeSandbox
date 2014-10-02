@@ -22,7 +22,7 @@ TimeManager::~TimeManager() {
 /**
  * Get the current time in nanoseconds 
  */
-TimeUnit TimeManager::get_time_nano() {
+TimeUnit TimeManager::getTimeNano() {
 
     struct timespec now;
     clock_gettime(CLOCK_MONOTONIC, &now);
@@ -33,12 +33,12 @@ TimeUnit TimeManager::get_time_nano() {
 /**
  * Get the elapsed time since the last game update
  */
-TimeUnit TimeManager::get_delta_time_nano() {
+TimeUnit TimeManager::getDeltaTimeNano() {
 
-    TimeUnit now = get_time_nano();
-    TimeUnit delta = now - m_last_update_time;
+    TimeUnit now = getTimeNano();
+    TimeUnit delta = now - mLastUpdateTime;
 
-    m_last_update_time = now;
+    mLastUpdateTime = now;
 
     return delta;
 }

@@ -8,6 +8,8 @@
 #include "GLES2Renderer.h"
 #include "GLUtils.h"
 #include "../utils/Logs.h"
+#include "../render/Shader.h"
+#include "../render/Square.h"
 
 #include <GLES2/gl2.h>
 
@@ -15,28 +17,39 @@
 
 /** Constructor */
 GLES2Renderer::GLES2Renderer() {
-    m_model = new Model();
+    
+    mModel = new Square();
+    mCamera = new Camera();
+    
+    mEnvironment = new Environment(); 
+    
 }
 
 /** Destructor */
 GLES2Renderer::~GLES2Renderer() {
-    delete m_model;
+    delete mModel;
+    delete mEnvironment; 
+    delete mCamera;
 }
 
 /**
  * Initialises the renderer. Returns true if the initialisation was  succesfull
  */
-bool GLES2Renderer::init() {
-    LOG_D(TAG, " ❯ init()");
+bool GLES2Renderer::init(int width, int height)  {
+    LogD(TAG, " ❯ init()");
 
     // Global config     
-    glEnable(GL_CULL_FACE);
+    glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);
+    
+    // pass the projection info to the environment
+    mEnvironment->setDisplaySize(width, height);
+    mEnvironment->setActiveCamera(mCamera);
 
     // TODO foreach renderable  : renderable.init
-
+    mModel->init();
 
     return true;
 }
@@ -44,18 +57,16 @@ bool GLES2Renderer::init() {
 /**
  * Draws a single frame
  */
-void GLES2Renderer::draw_frame() {
+void GLES2Renderer::drawFrame() {
 
     // Clears the screen
     glClearColor(0.1f, 0.5f, 0.9f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    mCamera->onPreRender();
 
-    // TODO foreach renderable : renderable.draw    
-    //for (unsigned int i = 0; i < numInstances; i++) {
-    //    glUniformMatrix2fv(mScaleRotUniform, 1, GL_FALSE, mScaleRot + 4*i);
-    //    glUniform2fv(mOffsetUniform, 1, mOffsets + 2*i);
-    //    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    //}
+    // TODO foreach renderable : renderable.draw  
+    mModel->render(mEnvironment); 
 }
     
 

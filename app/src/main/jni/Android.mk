@@ -22,6 +22,8 @@ include $(CLEAR_VARS)
 # setup the source files
 LOCAL_SRC_FILES := AndroidMain.cpp
 
+LOCAL_SRC_FILES += math/Matrix.cpp
+
 LOCAL_SRC_FILES += core/CoreEngine.cpp
 LOCAL_SRC_FILES += core/TimeManager.cpp
 LOCAL_SRC_FILES += core/SavedState.cpp
@@ -33,9 +35,14 @@ LOCAL_SRC_FILES += opengl/GLES2Renderer.cpp
 LOCAL_SRC_FILES += render/Shader.cpp
 LOCAL_SRC_FILES += render/Geometry.cpp
 LOCAL_SRC_FILES += render/Model.cpp
+LOCAL_SRC_FILES += render/Square.cpp
+LOCAL_SRC_FILES += render/Camera.cpp
+LOCAL_SRC_FILES += render/Environment.cpp
 
 LOCAL_SRC_FILES += behavior/BehaviorEngine.cpp
 LOCAL_SRC_FILES += behavior/BehavioralObject.cpp
+
+LOCAL_SRC_FILES += component/Transform.cpp
 
 # configure the module
 LOCAL_PATH := $(TOP_LOCAL_PATH)

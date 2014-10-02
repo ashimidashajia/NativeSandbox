@@ -16,137 +16,141 @@
 /**
  * Compiles the given vertex and fragment shaders and the combined program
  */
-GLuint create_program(const char *vs_source, const char *fs_source) {
+GLuint createProgram(const char *vsSource, const char *fsSource) {
 
-    LOG_D(TAG, " ❯ create_program(..., ...)");
+    LogD(TAG, " ❯ createProgram(..., ...)");
 
-    GLuint vs_name = 0;
-    GLuint fs_name = 0;
-    GLuint program_name = 0;
+    GLuint vsName = 0;
+    GLuint fsName = 0;
+    GLuint programName = 0;
 
 
     // compile both shaders
-    vs_name = create_shader(GL_VERTEX_SHADER, vs_source);
-    fs_name = create_shader(GL_FRAGMENT_SHADER, fs_source);
+    vsName = createShader(GL_VERTEX_SHADER, vsSource);
+    fsName = createShader(GL_FRAGMENT_SHADER, fsSource);
+    
+    LogD(TAG, "   • Shaders compiled : %d / %d", vsName, fsName);
 
     // compile the full program
-    if (vs_name && fs_name) {
-        program_name = create_program(vs_name, fs_name);
+    if (vsName && fsName) {
+        programName = createProgram(vsName, fsName);
     }
 
     // delete the shaders, don't need them anymore
-    glDeleteShader(vs_name);
-    glDeleteShader(fs_name);
+    glDeleteShader(vsName);
+    glDeleteShader(fsName);
+    
+    LogD(TAG, "   • Program compiled : %d", programName);
 
-    return program_name;
+    return programName;
 }
 
 /**
  * Compiles a full shader program with the given compiled vertex and fragment shaders.
  */
-GLuint create_program(GLuint vs_name, GLuint fs_name) {
+GLuint createProgram(GLuint vsName, GLuint fsName) {
 
-    LOG_D(TAG, " ❯ create_program(%d, %d)", vs_name, fs_name);
+    LogD(TAG, " ❯ createProgram(%d, %d)", vsName, fsName);
 
     // create the program slot
-    GLuint program_name = glCreateProgram();
-    if (!program_name) {
-        check_GL_error("glCreateProgram");
+    GLuint programName = glCreateProgram();
+    if (!programName) {
+        checkGLError("glCreateProgram");
         return 0;
     }
 
     // attach the shaders to the program
-    glAttachShader(program_name, vs_name);
-    glAttachShader(program_name, fs_name);
-    glLinkProgram(program_name);
+    glAttachShader(programName, vsName);
+    glAttachShader(programName, fsName);
+    glLinkProgram(programName);
 
     // check the linked status 
     GLint linked = GL_FALSE;
-    glGetProgramiv(program_name, GL_LINK_STATUS, &linked);
+    glGetProgramiv(programName, GL_LINK_STATUS, &linked);
 
     if (!linked) {
 
         // get log length
-        GLint info_log_length = 0;
-        glGetProgramiv(program_name, GL_INFO_LOG_LENGTH, &info_log_length);
-        if (info_log_length) {
+        GLint infoLogLength = 0;
+        glGetProgramiv(programName, GL_INFO_LOG_LENGTH, &infoLogLength);
+        if (infoLogLength) {
             // get log message
-            GLchar *info_log = (GLchar *) malloc(info_log_length);
-            if (info_log) {
-                glGetProgramInfoLog(program_name, info_log_length, NULL, info_log);
-                LOG_E(TAG, "   • Could not link program : %s", info_log);
-                free(info_log);
+            GLchar *infoLog = (GLchar *) malloc(infoLogLength);
+            if (infoLog) {
+                glGetProgramInfoLog(programName, infoLogLength, NULL, infoLog);
+                LogE(TAG, "   • Could not link program : %s", infoLog);
+                free(infoLog);
             }
         }
 
         // delete the program slot
-        glDeleteProgram(program_name);
-        program_name = 0;
+        glDeleteProgram(programName);
+        programName = 0;
     }
 
-    return program_name;
+    return programName;
 }
 
 /**
  * Compiles the given shader
  */
-GLuint create_shader(GLenum shader_type, const char *shader_source) {
+GLuint createShader(GLenum shader_type, const char *shader_source) {
 
-    LOG_D(TAG, " ❯ create_shader(%d, ...)", shader_type);
+    LogD(TAG, " ❯ createShader(%d, ...)", shader_type);
 
     // create a slot for the shader
-    GLuint shader_name = glCreateShader(shader_type);
-    if (!shader_name) {
-        check_GL_error("glCreateShader");
+    GLuint shaderName = glCreateShader(shader_type);
+    if (!shaderName) {
+        checkGLError("glCreateShader");
         return 0;
     }
 
     // set the shader source 
-    glShaderSource(shader_name, 1, &shader_source, NULL);
+    glShaderSource(shaderName, 1, &shader_source, NULL);
 
     // try and compile it 
     GLint compiled = GL_FALSE;
-    glCompileShader(shader_name);
-    glGetShaderiv(shader_name, GL_COMPILE_STATUS, &compiled);
+    glCompileShader(shaderName);
+    glGetShaderiv(shaderName, GL_COMPILE_STATUS, &compiled);
 
     if (!compiled) {
 
         // get log length
-        GLint info_log_length = 0;
-        glGetShaderiv(shader_name, GL_INFO_LOG_LENGTH, &info_log_length);
-        if (info_log_length > 0) {
+        GLint infoLogLength = 0;
+        glGetShaderiv(shaderName, GL_INFO_LOG_LENGTH, &infoLogLength);
+        if (infoLogLength > 0) {
             // get log message
-            GLchar *info_log = (GLchar *) malloc(info_log_length);
-            if (info_log) {
-                glGetShaderInfoLog(shader_name, info_log_length, NULL, info_log);
-                LOG_E(TAG, "   • Could not compile shader: %s", info_log);
-                free(info_log);
+            GLchar *infoLog = (GLchar *) malloc(infoLogLength);
+            if (infoLog) {
+                glGetShaderInfoLog(shaderName, infoLogLength, NULL, infoLog);
+                LogE(TAG, "   • Could not compile shader: %s", infoLog);
+                free(infoLog);
             }
         }
 
         // delete the shader slot
-        glDeleteShader(shader_name);
+        glDeleteShader(shaderName);
         return 0;
     }
 
-    return shader_name;
+    return shaderName;
 }
 
 
 /**
  * Prints the GL String corresponding to the name, prefixed by the given text
  */
-void print_gl_string(const char *text, GLenum name) {
+void printGLString(const char *text, GLenum name) {
     const char *value = (const char *) glGetString(name);
-    LOG_D(TAG, "   • %s => %s", text, value);
+    LogD(TAG, "   • %s => %s", text, value);
 }
 
 /**
 * Prints the EGL String corresponding to the name, prefixed by the given text
 */
-void print_egl_string(EGLDisplay display, const char *text, EGLint name) {
+void printEGLString(EGLDisplay display, const char *text, EGLint name) {
     const char *value = (const char *) eglQueryString(display, name);
-    LOG_D(TAG, "   • %s => %s", text, value);
+    LogD(TAG, "   • %s => %s", text, value);
 }
 
 
@@ -154,10 +158,10 @@ void print_egl_string(EGLDisplay display, const char *text, EGLint name) {
  * Check any GL error message and log it, prefixed with the last GL called function name.
  * Return true if an error is detected.
  */
-bool check_GL_error(const char *func_name) {
-    GLint error_code = glGetError();
-    if (error_code != GL_NO_ERROR) {
-        LOG_E(TAG, "   • GL error after %s(): 0x%08x", func_name, error_code);
+bool checkGLError(const char *func_name) {
+    GLint errorCode = glGetError();
+    if (errorCode != GL_NO_ERROR) {
+        LogE(TAG, "   • GL error after %s(): 0x%08x", func_name, errorCode);
         return true;
     }
     return false;

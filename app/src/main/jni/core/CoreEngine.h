@@ -41,45 +41,45 @@ public:
     /**
      * Method to handle the application commands, usually linked to the application lifecycle
      */
-    void handle_app_command(struct android_app *app, int32_t command);
+    void handleAppCommand(struct android_app *app, int32_t command);
 
     /**
      * Callback for input events (touch, key).
      * Return 1 to notify that the event was handled internally, or 0 to let the
      * default behavior (eg : back pressed)
      */
-    int32_t handle_input_event(AInputEvent *event);
+    int32_t handleInputEvent(AInputEvent *event);
 
     /** The main loop */
-    void main_loop(struct android_app *app);
+    void mainLoop(struct android_app *app);
 
 private :
 
     /** The OpenGL engine */
-    GLEngine *m_gl_engine;
+    GLEngine *mGLEngine;
     /** The behavior engine */
-    BehaviorEngine *m_behavior_engine;
+    BehaviorEngine *mBehaviorEngine;
     /** The time manager */
-    TimeManager *m_time_manager;
+    TimeManager *mTimeManager;
     /** the saved state (for seamless app transitions) */
-    SavedState *m_saved_state;
+    SavedState *mSavedState;
 
     /**
      * Callback triggered when the user perform a touch event
      * Return 0 to let the framework handle the key event, 1 if everything has been handled
      */
-    int32_t on_touch_event(AInputEvent *event);
+    int32_t onTouchEvent(AInputEvent *event);
 
     /**
      * Callback triggered when the user uses a physical (or software ?) key
      * Return 0 to let the framework handle the key event, 1 if everything has been handled
      */
-    int32_t on_key_event(AInputEvent *event);
+    int32_t onKeyEvent(AInputEvent *event);
 
     /**
      * Poll all available looper events
      */
-    void poll_looper_events(struct android_app *app);
+    void pollLooperEvents(struct android_app *app);
 };
 
 #endif

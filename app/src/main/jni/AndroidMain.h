@@ -24,14 +24,14 @@ void android_main(struct android_app *state);
 /**
  * Callback to handle the application commands, usually linked to the application lifecycle
  */
-static void handle_app_command(struct android_app *app, int32_t command);
+static void handleAppCommand(struct android_app *app, int32_t command);
 
 /**
  * Callback for input events (touch, key).
  * Return 1 to notify that the event was handled internally, or 0 to let the
  * default behavior (eg : back pressed)
  */
-static int32_t handle_input_event(struct android_app *app, AInputEvent *event);
+static int32_t handleInputEvent(struct android_app *app, AInputEvent *event);
 
 }
 

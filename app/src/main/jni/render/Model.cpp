@@ -6,44 +6,55 @@
  */
 
 #include "Model.h"
+#include "../utils/Logs.h"
+
+#define TAG "Model"
 
 /** Constructor */
 Model::Model() {
-    m_shader = 0;
-    m_geometry = 0;
+    mShader = new Shader();
+    mGeometry = new Geometry();
 
-    m_pos_attrib = -1;
-    m_color_attrib = -1;
+    // TODO mTransform = NULL; 
+    // for test purposes, lets assume we set it here, though we should never do that ! 
+    mTransform = new Transform();
+    mTransform->setPosition(0, 0, 5);
+    mTransform->getMatrix()->log();
 }
 
 /** Destructor */
 Model::~Model() {
-    if (m_shader) {
-        delete m_shader;
+    if (mShader) {
+        delete mShader;
     }
 
-    if (m_geometry) {
-        delete m_geometry;
+    if (mGeometry) {
+        delete mGeometry;
     }
+    
+}
+
+
+/**
+ * Called when this component is attached to an object. The parent object is accesible in the 
+ * mObject field from now on. 
+ */
+void Model::onAttached(){
+    // TODO mTransform = transform from object 
 }
 
 /**
  * Initialises the shader.
  * Returns true if the initialization was succesfully.
  */
-bool Model::init_shader(const char *vs_source, const char *fs_source) {
+bool Model::initShader(const char *vsSource, const char *fsSource) {
 
-    m_shader = new Shader();
-
-    if (!m_shader->init(vs_source, fs_source)) {
-        delete m_shader;
-        m_shader = NULL;
+    if (!mShader->init(vsSource, fsSource)) {
+        LogW(TAG, "   • Error while compiling shader");
+        delete mShader;
+        mShader = NULL;
         return false;
     }
-
-    // shader is ok, let's get its (common) attributes 
-    m_pos_attrib = m_shader->get_position_attrib();
-    m_color_attrib = m_shader->get_color_attrib();
 
     return true;
 }
@@ -52,38 +63,51 @@ bool Model::init_shader(const char *vs_source, const char *fs_source) {
  * Initializes the geometry with the given Vertices array. 
  * Returns true if the initialization was succesfully. 
  */
-bool Model::init_geometry(Vertex *vertices, int vertices_count, GLenum mode) {
-
-    m_geometry = new Geometry();
-
-    if (!m_geometry->init(vertices, vertices_count, mode)) {
-        delete m_geometry;
-        m_geometry = NULL;
+bool Model::initGeometry(GLfloat *vertices, int vtxCount, unsigned short vtxMask, 
+                            GLubyte *indices, int idxCount, GLenum mode) {
+    
+    if (!mGeometry->initVertices(vertices, vtxCount, vtxMask)) {
+        delete mGeometry;
+        mGeometry = NULL;
         return false;
     }
 
+    mGeometry->initIndices(indices, idxCount, mode);
     return true;
 }
 
 /** 
  * Renders the object
  */
-void Model::render() {
+void Model::render(Environment *env) {
 
-    // sets the shader as active 
-    if (m_shader) {
-        m_shader->set_active();
+    // Check that we have a shader
+    if (mShader == NULL) {
+        LogW(TAG, "   • can't draw a model with a NULL shader");
+        return; 
     }
-
-    // sets the geometry active 
-    if (m_geometry) {
-        m_geometry->set_active(m_pos_attrib, m_color_attrib);
+    
+    // Check that we have a geometry
+    if (mGeometry == NULL) {
+        LogW(TAG, "   • can't draw a model with a NULL geometry");
+        return; 
     }
-
-    // TODO set uniform values 
-    // glUniformMatrix2fv(mScaleRotUniform, 1, GL_FALSE, mScaleRot + 4*i);
-    // glUniform2fv(mOffsetUniform, 1, mOffsets + 2*i);
+    
+    
+    // set the shader active
+    LogV(TAG, "   • Set shader active");
+    mShader->setActive();
+    
+    // set the environment 
+    LogV(TAG, "   • Set environment");
+    env->setUniformValues(mShader);
+    
+    // set uniform values 
+    LogV(TAG, "   • Set uniform values");
+    glUniformMatrix4fv(mShader->getModelMatrixUniformHandle(), 1, false, mTransform->getMatrixData());
 
     // draw the geometry
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    LogV(TAG, "   • Draw geometry");
+    mGeometry->drawGeometry(mShader);
+
 }

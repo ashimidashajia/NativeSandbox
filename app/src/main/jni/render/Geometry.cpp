@@ -6,10 +6,13 @@
  */
 
 #include "Geometry.h"
+#include "../utils/Logs.h"
+
+#define TAG "Geometry"
 
 /** Constructor */
 Geometry::Geometry() {
-    m_vertex_buffer = 0;
+    mVtxBufferHandle = 0;
 }
 
 /** Destructor */
@@ -17,63 +20,107 @@ Geometry::~Geometry() {
 }
 
 /**
- * Initializes the geometry with the given Vertices array. The vertices are drawn with a simple
- * mode (can be GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_STRIP,
- * GL_TRIANGLE_FAN).
+ * Initializes the geometry with the given vertices array. 
+ * 
+ * The array contains each vertex information successively (meaning that all info for a single 
+ * vertex is consecutive). Each vertex can have a position, a normal, tangent and binormal vector, 
+ * a texture coordinate. 
+ * 
+ * If a field is not used at all in the geometry (for instance, there is no normal information
+ * throughout the geometry), then you can ommit the data, and set the vtxMask accordingly.
+ * 
+ * The order in which the vertex attributes are set should be respected : Position (3 floats), 
+ * Normal (3 floats), Tangent (3 floats), Binormal (3 float), Texture Coordinates (2 floats)
+ * 
+ * The vtxMask value can be a composition of VTX_MASK_POSITION, VTX_MASK_NORMAL, 
+ * VTX_MASK_TANGENT, VTX_MASK_BINORM, VTX_MASK_TEXCOORDS
  */
-bool Geometry::init(Vertex *vertices, int vertices_count, GLenum mode) {
-
+bool Geometry::initVertices(GLfloat *vertices, int vtxCount, unsigned short vtxMask){
+    
+    if ((vtxMask & VTX_MASK_POSITION) == 0) {
+        LogE(TAG, "   • Can't create geometry without at least some vertex position");
+        return false;
+    }
+    
+    // compute a vertex 'size' and offsets based on the mask
+    int size = 0; 
+    mVtxPositionOffset = size;
+    size += 3;
+    mVtxNormalOffset = size;
+    size += (vtxMask & VTX_MASK_NORMAL) ? 3 : 0;
+    mVtxTangentOffset = size;
+    size += (vtxMask & VTX_MASK_TANGENT) ? 3 : 0;
+    mVtxBinormalOffset = size;
+    size += (vtxMask & VTX_MASK_BINORM) ? 3 : 0;
+    mVtxTexCoordsOffset = size;
+    size += (vtxMask & VTX_MASK_TEXCOORDS) ? 2 : 0; 
+    
+    
     // generate the buffer slot
-    glGenBuffers(1, &m_vertex_buffer);
+    glGenBuffers(1, &mVtxBufferHandle);
 
     // bind and fill the buffer
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, vertices_count * sizeof(Vertex), vertices, GL_STATIC_DRAW);
-
-    m_vertices_count = vertices_count;
-    m_indices = 0;
-    m_indices_count = 0;
-
-    // save the drawing mode
-    m_array_mode = mode;
+    glBindBuffer(GL_ARRAY_BUFFER, mVtxBufferHandle);
+    glBufferData(GL_ARRAY_BUFFER, vtxCount * size * sizeof (GLfloat), vertices, GL_STATIC_DRAW);
+    
+    // keep the vertices count, mask and stride
+    mVtxCount = vtxCount;
+    mVtxStride = size * sizeof (GLfloat);
+    mVtxMask = vtxMask;
+    
+    return true; 
 }
 
 /**
- * Initializes the geometry with the given vertices and indices arrays.
- * The vertices are drawn as triangles, based on the given indices.
+ * Initializes the geometry with the given indices arrays. 
+ * 
+ * If the indices array is NULL, then the natural vertex order will be used. 
+ * 
+ * The drawing mode can be GL_POINTS, GL_LINES, GL_LINE_STRIP, 
+ * GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN).
  */
-bool Geometry::init(Vertex *vertices, int vertices_count, GLubyte *indices, int indices_count) {
-    // generate the buffer slot
-    glGenBuffers(1, &m_vertex_buffer);
-
-    // bind and fill the buffer
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, vertices_count * sizeof(Vertex), vertices, GL_STATIC_DRAW);
-
-    // save the vertices count
-    m_vertices_count = vertices_count;
-
-    m_indices = indices;
-    m_indices_count = indices_count;
-
-    // save the drawing mode
-    m_array_mode = GL_TRIANGLES;
+void Geometry::initIndices(GLubyte *indices, int idxCount, GLenum mode) {
+    
+    if ((idxCount == 0) || (indices == NULL)) {
+        mIdxBuffer = NULL; 
+        mIdxCount = 0; 
+        mArrayMode = GL_POINTS; 
+    } else {
+        mIdxBuffer = indices;
+        mIdxCount = idxCount;
+        mArrayMode = mode;
+    }
+    
 }
 
+
 /**
- * Sets this geometry as active, and binds to the shader attributes
+ * Draws the geometry using the given shader. Any attribute or parameter not set by the geometry
+ * should already be set on the Shader
  */
-void Geometry::set_active(GLint pos_attrib, GLint color_attrib) {
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
-
-    if (pos_attrib >= 0) {
-        glVertexAttribPointer(pos_attrib, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *) offsetof(Vertex, pos));
-        glEnableVertexAttribArray(pos_attrib);
+void Geometry::drawGeometry(Shader *shader) {
+    
+    // binds to this geometry array buffer
+    glBindBuffer(GL_ARRAY_BUFFER, mVtxBufferHandle);
+    
+    GLint handle; 
+    
+    // Position 
+    handle = shader->getPositionAttributeHandle();
+    if ((mVtxMask & VTX_MASK_POSITION) && (handle >= 0)) {
+        //              TODO          v     Change this to a CONSTANT
+        glVertexAttribPointer(handle, 3, GL_FLOAT, GL_FALSE, mVtxStride, (const GLvoid *) mVtxPositionOffset);
+        glEnableVertexAttribArray(handle);
+    } else {
+        glDisableVertexAttribArray(handle);
     }
 
-    if (color_attrib) {
-        glVertexAttribPointer(color_attrib, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (const GLvoid *) offsetof(Vertex, rgba));
-        glEnableVertexAttribArray(color_attrib);
+    // TODO Normal, Tangents, Binormal, Texture Coordinates
+    
+    // Check if we have indices or follow the natural order
+    if ((mIdxBuffer == NULL) || (mIdxCount == 0)) {
+        glDrawArrays(mArrayMode, 0, mVtxCount);
+    } else {
+        glDrawElements(mArrayMode, mIdxCount, GL_UNSIGNED_BYTE, mIdxBuffer); 
     }
 }

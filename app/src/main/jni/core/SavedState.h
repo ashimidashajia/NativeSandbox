@@ -28,18 +28,18 @@ public:
     /**
      * Gets the size to allocate for the saved state.
      */
-    size_t get_saved_state_size();
+    size_t getSize();
 
     /**
      * Reads the saved data from the given pointer. 
      */
-    void read_saved_state_data(void *saved_data, size_t saved_data_size);
+    void read(void *data, size_t size);
 
     /**
      * Writes the saved data into the given pointer. 
-     * The memory has already been allocated according to get_saved_state_size(). 
+     * The memory has already been allocated according to getSize(). 
      */
-    void write_saved_state_data(void *saved_data);
+    void write(void *data);
 
 private :
 

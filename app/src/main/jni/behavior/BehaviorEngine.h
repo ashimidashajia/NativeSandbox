@@ -38,30 +38,30 @@ public:
     /**
      * Method to clean up everything at the start of a new frame
      */
-    void start_frame();
+    void startFrame();
 
     /**
      * Method to update the whole behavioral state
      */
-    void update_state(TimeUnit delta_time);
+    void updateState(TimeUnit deltaTime);
     
     /**
      * Called just before rendering a frame
      */
-    void pre_render();
+    void preRender();
     
     /**
      * Called just after rendering a frame
      */
-    void post_render();
+    void postRender();
     
 private :
 
     /** list of behavioral objects ? */
-    // List<BehavioralObject> m_objects ??;
+    // List<BehavioralObject> mObjects ??;
     
     /** List of components */
-    // List<Component> m_components;
+    // List<Component> mComponents;
 
 };
 

@@ -9,11 +9,12 @@
 #ifndef RENDERABLE_H
 #define RENDERABLE_H
 
+#include "Environment.h"
 
 /**
  * A Renderable component makes an object renderable
  */
-class Renderable /* : public Component */ {
+class Renderable : public Component  {
 
 public:
 
@@ -29,7 +30,7 @@ public:
     /**
      * Renders the object
      */
-    virtual void render() = 0;
+    virtual void render(Environment *env) = 0;
 
 protected:
 

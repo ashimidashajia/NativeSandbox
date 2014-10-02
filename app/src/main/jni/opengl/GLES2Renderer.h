@@ -10,6 +10,8 @@
 
 #include "GLRenderer.h"
 #include "../render/Model.h"
+#include "../render/Environment.h"
+#include "../render/Camera.h"
 
 /**
  * The GLES2Renderer class is an implementation of GLRenderer using Open GL ES 2.0 apis.
@@ -27,18 +29,20 @@ public:
     /**
      * Initialises the renderer. Returns true if the initialisation was  succesfull
      */
-    virtual bool init();
+    virtual bool init(int width, int height) ;
 
     /**
      * Draws a single frame
      */
-    virtual void draw_frame();
+    virtual void drawFrame();
 
 protected:
 
 private:
 
-    Model *m_model;
+    Camera *mCamera; 
+    Model *mModel;
+    Environment *mEnvironment; 
 
 };
 

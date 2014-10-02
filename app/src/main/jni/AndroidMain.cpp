@@ -26,7 +26,7 @@ extern "C" {
  */
 void android_main(struct android_app *app) {
 
-    LOG_D(TAG, " ❯ android_main(app)");
+    LogD(TAG, " ❯ android_main(app)");
 
     // Call a method from the android_native_app_glue to make sure it is linked
     app_dummy();
@@ -36,11 +36,11 @@ void android_main(struct android_app *app) {
 
     // setup the application callbacks
     app->userData = (void *) core_engine;
-    app->onAppCmd = handle_app_command;
-    app->onInputEvent = handle_input_event;
+    app->onAppCmd = handleAppCommand;
+    app->onInputEvent = handleInputEvent;
 
     // Start the main loop
-    core_engine->main_loop(app);
+    core_engine->mainLoop(app);
 }
 
 /**
@@ -48,25 +48,25 @@ void android_main(struct android_app *app) {
  * Return 1 to notify that the event was handled internally, or 0 to let the
  * default behavior (eg : back pressed)
  */
-static int32_t handle_input_event(struct android_app *app, AInputEvent *event) {
+static int32_t handleInputEvent(struct android_app *app, AInputEvent *event) {
     CoreEngine *engine = (CoreEngine *) app->userData;
 
     if (engine == NULL) {
         return 0;
     }
 
-    return engine->handle_input_event(event);
+    return engine->handleInputEvent(event);
 }
 
 
 /**
  * Callback to handle the application commands, usually linked to the application lifecycle
  */
-static void handle_app_command(struct android_app *app, int32_t command) {
+static void handleAppCommand(struct android_app *app, int32_t command) {
     CoreEngine *engine = (CoreEngine *) app->userData;
 
     if (engine != NULL) {
-        engine->handle_app_command(app, command);
+        engine->handleAppCommand(app, command);
     }
 }
 
