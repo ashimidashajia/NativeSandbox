@@ -6,6 +6,7 @@
  */
 
 #include "Camera.h"
+#include "../math/Matrix.h"
 #include <GLES2/gl2.h>
 #include <math.h>
 
@@ -15,19 +16,28 @@
 
 /** Constructor */
 Camera::Camera() {
-    mNearPlane = 0.1;
-    mFarPlane = 10.0; 
-    mFov = M_PI_2; // 90°
+    mNearPlane = 1;
+    mFarPlane = 15.0; 
+    mFov = M_PI_2 * 0.8f; // 90°
     mAspectRatio = 1.0f;
     
-    mProjMatrix = new Matrix();
-    mViewProjMatrix = new Matrix();
+    mProjMatrix = ALLOCATE_MATRIX();
+    setMatrixIdentity(mProjMatrix, 0);
+    mViewProjMatrix = ALLOCATE_MATRIX();
+    setMatrixIdentity(mViewProjMatrix, 0);
+    mInvertViewMatrix = ALLOCATE_MATRIX();
+    setMatrixIdentity(mInvertViewMatrix, 0); 
+    
+    LogD(TAG, "   • View Matrix (in constructor)");
+    setLookAtMatrix(getMatrix(),  0, 0, 0, -2, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    logMatrix(getMatrix(), 0);  
 }
 
 /** Destructor */
 Camera::~Camera() {
-    delete(mProjMatrix);
-    delete(mViewProjMatrix);
+    free(mProjMatrix);
+    free(mViewProjMatrix);
+    free(mInvertViewMatrix);
 }
 
 
@@ -35,7 +45,7 @@ Camera::~Camera() {
  * Sets the projection width and height
  */
 void Camera::setProjectionSize(int width, int height){
-    LogD(TAG, " ❯ setProjectionSize(%d, %d)", width, height);
+    LogD(TAG, " ❯ Camera::setProjectionSize(%d, %d)", width, height);
     mAspectRatio = (width * 1.0f) / height; 
     LogD(TAG, "   • aspect ratio = %f", mAspectRatio);
 }
@@ -45,24 +55,29 @@ void Camera::setProjectionSize(int width, int height){
  * ViewProj, View, Proj, ...
  */
 void Camera::setUniformValues(Shader *shader) {
-    LogD(TAG, " ❯ setUniformValues()");
-    glUniformMatrix4fv(shader->getViewProjMatrixUniformHandle(), 1, false, mViewProjMatrix->getData());
+    LogD(TAG, " ❯ Camera::setUniformValues()");
+    glUniformMatrix4fv(shader->getViewProjMatrixUniformHandle(), 1, false, mViewProjMatrix);
 }
 
 /**
  */
 void Camera::onPreRender() {
-    LogD(TAG, " ❯ onPreRender()");
+    LogD(TAG, " ❯ Camera::onPreRender()");
     
     // update projection matrix
-    mProjMatrix->setProjectionMatrix(mFov, mAspectRatio, mNearPlane, mFarPlane);
-    mProjMatrix->log();
+    setPerspectiveMatrix(mProjMatrix, 0, mFov, mAspectRatio, mNearPlane, mFarPlane);
+    LogD(TAG, "   • Projection Matrix (fov : %f, ratio : %f, near : %f, far : %f)", mFov, mAspectRatio, mNearPlane, mFarPlane);
+    logMatrix(mProjMatrix, 0);
+    
     
     // update View Projection Matrix : VP = P * V
     // V = C⁻¹ where C is the Matrix of the Camera
     // P = Projection matrix
-    mViewProjMatrix->set(getMatrix());
-    mViewProjMatrix->inverse();
-    mViewProjMatrix->preMultiply(mProjMatrix);
-    mViewProjMatrix->log();
+    invertMatrix(mInvertViewMatrix, 0, getMatrix(), 0); 
+    LogD(TAG, "   • Invert View Matrix");
+    logMatrix(mViewProjMatrix, 0); 
+    
+    multiplyMatrices(mViewProjMatrix, 0, mProjMatrix, 0, mInvertViewMatrix, 0); 
+    LogD(TAG, "   • ViewProjection Matrix");
+    logMatrix(mViewProjMatrix, 0); 
 }

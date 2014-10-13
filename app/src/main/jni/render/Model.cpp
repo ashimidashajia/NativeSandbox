@@ -18,8 +18,12 @@ Model::Model() {
     // TODO mTransform = NULL; 
     // for test purposes, lets assume we set it here, though we should never do that ! 
     mTransform = new Transform();
-    mTransform->setPosition(0, 0, 5);
-    mTransform->getMatrix()->log();
+    LogD(TAG, "   • Transform Matrix (1)");
+    logMatrix(mTransform->getMatrix(), 0);
+    
+    mTransform->translate(0, 0, 5);    
+    LogD(TAG, "   • Transform Matrix (2)");
+    logMatrix(mTransform->getMatrix(), 0);
 }
 
 /** Destructor */
@@ -67,6 +71,7 @@ bool Model::initGeometry(GLfloat *vertices, int vtxCount, unsigned short vtxMask
                             GLubyte *indices, int idxCount, GLenum mode) {
     
     if (!mGeometry->initVertices(vertices, vtxCount, vtxMask)) {
+        LogW(TAG, "   • Can't init geometry");
         delete mGeometry;
         mGeometry = NULL;
         return false;
@@ -104,7 +109,7 @@ void Model::render(Environment *env) {
     
     // set uniform values 
     LogV(TAG, "   • Set uniform values");
-    glUniformMatrix4fv(mShader->getModelMatrixUniformHandle(), 1, false, mTransform->getMatrixData());
+    glUniformMatrix4fv(mShader->getModelMatrixUniformHandle(), 1, false, mTransform->getMatrix());
 
     // draw the geometry
     LogV(TAG, "   • Draw geometry");

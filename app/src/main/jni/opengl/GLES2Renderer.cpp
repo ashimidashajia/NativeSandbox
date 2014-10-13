@@ -39,7 +39,7 @@ bool GLES2Renderer::init(int width, int height)  {
     LogD(TAG, " ❯ init()");
 
     // Global config     
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);

@@ -76,19 +76,14 @@ public:
 // protected:
 
     /** 
-     * Returns the matrix 
-     */
-    Matrix *getMatrix();
-    
-    /** 
      * Returns the matrix as a float[16], which can be then sent to a shader as a parameter
      */
-    float *getMatrixData();
+    float *getMatrix();
     
 private: 
     
     /** transform matrix of the virtual position of the camera */
-    Matrix *mMatrix; 
+    float *mMatrix; 
     
 };
 

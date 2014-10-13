@@ -45,8 +45,9 @@ private:
     float mNearPlane, mFarPlane;
     float mFov, mAspectRatio;
     
-    Matrix *mProjMatrix; 
-    Matrix *mViewProjMatrix; 
+    float *mProjMatrix; 
+    float *mViewProjMatrix; 
+    float *mInvertViewMatrix; 
     
 };
 

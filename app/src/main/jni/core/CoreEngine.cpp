@@ -31,7 +31,7 @@ CoreEngine::~CoreEngine() {
  * Method to handle the application commands, usually linked to the application lifecycle
  */
 void CoreEngine::handleAppCommand(struct android_app *app, int32_t command) {
-    LogD(TAG, " ❯ handle_app_cmd(app, command=%d)", command);
+    LogD(TAG, " ❯ CoreEngine::handle_app_cmd(app, command=%d)", command);
 
     switch (command) {
 
@@ -84,7 +84,7 @@ void CoreEngine::handleAppCommand(struct android_app *app, int32_t command) {
  */
 int32_t CoreEngine::handleInputEvent(AInputEvent *event) {
 
-    LogD(TAG, " ❯ handle_input(app, event)");
+    LogD(TAG, " ❯ CoreEngine::handle_input(app, event)");
     int32_t eventType = AInputEvent_getType(event);
     int32_t handled = 0;
 
@@ -112,7 +112,7 @@ int32_t CoreEngine::handleInputEvent(AInputEvent *event) {
  */
 int32_t CoreEngine::onTouchEvent(AInputEvent *event) {
 
-    LogD(TAG, " ❯ onTouchEvent(app, event)");
+    LogD(TAG, " ❯ CoreEngine::onTouchEvent(app, event)");
 
     size_t i, pointerCount = AMotionEvent_getPointerCount(event);
     float x, y;
@@ -133,7 +133,7 @@ int32_t CoreEngine::onTouchEvent(AInputEvent *event) {
  */
 int32_t CoreEngine::onKeyEvent(AInputEvent *event) {
 
-    LogD(TAG, " ❯ onKeyEvent(app, event)");
+    LogD(TAG, " ❯ CoreEngine::onKeyEvent(app, event)");
 
     int32_t action, code;
 

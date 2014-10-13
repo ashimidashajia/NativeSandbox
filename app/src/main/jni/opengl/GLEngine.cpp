@@ -38,7 +38,7 @@ GLEngine::~GLEngine() {
  * Initialises the EGL interface and bind it to the application's window.
  */
 void GLEngine::initDisplay(ANativeWindow *window) {
-    LogD(TAG, " ❯ initDisplay(window)");
+    LogD(TAG, " ❯ GLEngine::initDisplay(window)");
 
     EGLint width, height, dummy;
 
@@ -215,7 +215,7 @@ void GLEngine::terminateDisplay() {
  */
 void GLEngine::drawFrame() {
 
-    LogD(TAG, " ❯ drawFrame()");
+    LogD(TAG, " ❯ GLEngine::drawFrame()");
 
     if (mDisplay == NULL) {
         LogW(TAG, "   • no display");

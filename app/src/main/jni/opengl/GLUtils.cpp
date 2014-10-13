@@ -18,7 +18,7 @@
  */
 GLuint createProgram(const char *vsSource, const char *fsSource) {
 
-    LogD(TAG, " ❯ createProgram(..., ...)");
+    LogD(TAG, " ❯ GLUtils::createProgram(..., ...)");
 
     GLuint vsName = 0;
     GLuint fsName = 0;
@@ -50,7 +50,7 @@ GLuint createProgram(const char *vsSource, const char *fsSource) {
  */
 GLuint createProgram(GLuint vsName, GLuint fsName) {
 
-    LogD(TAG, " ❯ createProgram(%d, %d)", vsName, fsName);
+    LogD(TAG, " ❯ GLUtils::createProgram(%d, %d)", vsName, fsName);
 
     // create the program slot
     GLuint programName = glCreateProgram();
@@ -96,7 +96,7 @@ GLuint createProgram(GLuint vsName, GLuint fsName) {
  */
 GLuint createShader(GLenum shader_type, const char *shader_source) {
 
-    LogD(TAG, " ❯ createShader(%d, ...)", shader_type);
+    LogD(TAG, " ❯ GLUtils::createShader(%d, ...)", shader_type);
 
     // create a slot for the shader
     GLuint shaderName = glCreateShader(shader_type);

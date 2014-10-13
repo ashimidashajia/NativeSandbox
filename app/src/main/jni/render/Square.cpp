@@ -9,10 +9,10 @@
 
 
 GLfloat SQUARE_VERTICES[12] = {
-    -0.7f, -0.7f,
-     0.7f, -0.7f,
-    -0.7f,  0.7f,
-     0.7f,  0.7f,
+    -0.7f, -0.7f, 0.0f,
+     0.7f, -0.7f, 0.0f,
+    -0.7f,  0.7f, 0.0f,
+     0.7f,  0.7f, 0.0f,
 };
 
 /** Constructor */
@@ -26,6 +26,6 @@ Square::~Square() {
 void Square::init() {
     
     initShader(VS_DEFAULT, FS_DEFAULT);
-    initGeometry(&SQUARE_VERTICES[0], 12, VTX_MASK_POSITION, NULL, 0, GL_TRIANGLE_STRIP); 
+    initGeometry(&SQUARE_VERTICES[0], 4, VTX_MASK_POSITION, NULL, 0, GL_TRIANGLE_STRIP); 
     
 }

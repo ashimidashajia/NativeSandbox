@@ -23,7 +23,7 @@ BehaviorEngine::~BehaviorEngine() {
  * Method to update the whole behavioral state
  */
 void BehaviorEngine::updateState(TimeUnit deltaTime) {
-    LogV(TAG, " ❯ updateState(%lld)", deltaTime);
+    LogV(TAG, " ❯ BehaviorEngine::updateState(%lld)", deltaTime);
 
     // TODO update some things 
     // foreach (GameComponent in mGameObjects) {

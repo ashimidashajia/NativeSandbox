@@ -20,19 +20,19 @@ static const char VS_DEFAULT[] =
         "uniform mat4 uMMatrix;\n"
         "uniform mat4 uVPMatrix;\n"
         "uniform vec4 uDiffuse;\n"
-        "attribute vec3 aPosition;\n"
+        "attribute vec4 aPosition;\n"
         "varying vec4 vColor;\n"
         "void main() {\n"
-        "    gl_Position = (uVPMatrix * uMMatrix) * vec4(aPosition, 0);\n"
+        "    gl_Position = (uVPMatrix * uMMatrix) * aPosition;\n"
         "    vColor = vec4(1, 1, 1, 1);"
         "}\n";
-
+        
 static const char FS_DEFAULT[] =
         "#version 100\n"
         "precision mediump float;\n"
         "varying vec4 vColor;\n"
         "void main() {\n"
-        "    gl_FragColor = vColor;\n"
+        "    gl_FragColor = vec4(1, 1, 0, 1);\n"
         "}\n";
 
 /**

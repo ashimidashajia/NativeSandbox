@@ -84,7 +84,7 @@ void Geometry::initIndices(GLubyte *indices, int idxCount, GLenum mode) {
     if ((idxCount == 0) || (indices == NULL)) {
         mIdxBuffer = NULL; 
         mIdxCount = 0; 
-        mArrayMode = GL_POINTS; 
+        mArrayMode = mode; 
     } else {
         mIdxBuffer = indices;
         mIdxCount = idxCount;
@@ -100,7 +100,10 @@ void Geometry::initIndices(GLubyte *indices, int idxCount, GLenum mode) {
  */
 void Geometry::drawGeometry(Shader *shader) {
     
+    LogD(TAG, " ❯ Geometry::drawGeometry()");
+    
     // binds to this geometry array buffer
+    LogD(TAG, "   • bind the vertex buffer");
     glBindBuffer(GL_ARRAY_BUFFER, mVtxBufferHandle);
     
     GLint handle; 
@@ -109,9 +112,11 @@ void Geometry::drawGeometry(Shader *shader) {
     handle = shader->getPositionAttributeHandle();
     if ((mVtxMask & VTX_MASK_POSITION) && (handle >= 0)) {
         //              TODO          v     Change this to a CONSTANT
-        glVertexAttribPointer(handle, 3, GL_FLOAT, GL_FALSE, mVtxStride, (const GLvoid *) mVtxPositionOffset);
+        LogD(TAG, "   • Set position attribute");
         glEnableVertexAttribArray(handle);
+        glVertexAttribPointer(handle, 3, GL_FLOAT, GL_FALSE, mVtxStride, (const GLvoid *) mVtxPositionOffset);
     } else {
+        LogD(TAG, "   • No position");
         glDisableVertexAttribArray(handle);
     }
 
@@ -119,8 +124,10 @@ void Geometry::drawGeometry(Shader *shader) {
     
     // Check if we have indices or follow the natural order
     if ((mIdxBuffer == NULL) || (mIdxCount == 0)) {
+        LogD(TAG, "   • Draw arrays in standard mode %d %d %d", mArrayMode, 0, mVtxCount);
         glDrawArrays(mArrayMode, 0, mVtxCount);
     } else {
+        LogD(TAG, "   • Draw elements with indices");
         glDrawElements(mArrayMode, mIdxCount, GL_UNSIGNED_BYTE, mIdxBuffer); 
     }
 }
