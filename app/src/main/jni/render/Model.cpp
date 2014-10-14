@@ -15,15 +15,7 @@ Model::Model() {
     mShader = new Shader();
     mGeometry = new Geometry();
 
-    // TODO mTransform = NULL; 
-    // for test purposes, lets assume we set it here, though we should never do that ! 
-    mTransform = new Transform();
-    LogD(TAG, "   • Transform Matrix (1)");
-    logMatrix(mTransform->getMatrix(), 0);
-    
-    mTransform->translate(0, 0, 5);    
-    LogD(TAG, "   • Transform Matrix (2)");
-    logMatrix(mTransform->getMatrix(), 0);
+    mTransform = NULL; 
 }
 
 /** Destructor */
@@ -35,7 +27,6 @@ Model::~Model() {
     if (mGeometry) {
         delete mGeometry;
     }
-    
 }
 
 
@@ -44,7 +35,7 @@ Model::~Model() {
  * mObject field from now on. 
  */
 void Model::onAttached(){
-    // TODO mTransform = transform from object 
+    mTransform = dynamic_cast<Transform *>(mObject->getComponent(T_TRANSFORM)); 
 }
 
 /**
@@ -98,7 +89,6 @@ void Model::render(Environment *env) {
         return; 
     }
     
-    
     // set the shader active
     LogV(TAG, "   • Set shader active");
     mShader->setActive();
@@ -108,11 +98,20 @@ void Model::render(Environment *env) {
     env->setUniformValues(mShader);
     
     // set uniform values 
-    LogV(TAG, "   • Set uniform values");
-    glUniformMatrix4fv(mShader->getModelMatrixUniformHandle(), 1, false, mTransform->getMatrix());
+    if (mTransform != NULL) {
+        LogV(TAG, "   • Set transform uniform values");
+        glUniformMatrix4fv(mShader->getModelMatrixUniformHandle(), 1, false, mTransform->getMatrix());
+    }
 
     // draw the geometry
     LogV(TAG, "   • Draw geometry");
     mGeometry->drawGeometry(mShader);
 
+}
+
+/**
+ * Returns a unique value to identify the component's type 
+ */
+long long int Model::getType() {
+    return T_SHAPE_3D;
 }

@@ -61,6 +61,11 @@ protected:
      * Returns true if the initialization was succesfully.
      */
     bool initGeometry(GLfloat *vertices, int vtxCount, unsigned short vtxMask, GLubyte *indices, int idxCount, GLenum mode);
+    
+    /**
+     * Returns a unique value to identify the component's type 
+     */
+    long long int getType();
 
 private:
 

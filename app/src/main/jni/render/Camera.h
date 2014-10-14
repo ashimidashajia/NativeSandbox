@@ -16,7 +16,7 @@
  * The Camera class gives some easy features to manipulate the View and Projection matrix, using 
  * a virtual Camera object which can be moved around. 
  */
-class Camera : public Transform{
+class Camera : public Transform {
 
 public:
 
@@ -37,7 +37,15 @@ public:
      */
     void setProjectionSize(int width, int height);
     
-    virtual void onPreRender();
+    /**
+     * Called before a frame is rendered
+     */
+    void onPreRender();
+    
+    /**
+     * Returns a unique value to identify the component's type 
+     */
+    long long int getType();
     
 private: 
     

@@ -16,7 +16,7 @@ GLfloat SQUARE_VERTICES[12] = {
 };
 
 /** Constructor */
-Square::Square() {
+Square::Square() { 
 }
 
 /** Destructor */

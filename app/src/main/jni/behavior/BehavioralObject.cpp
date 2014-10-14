@@ -14,13 +14,28 @@ BehavioralObject::BehavioralObject() {
 
 /** Destructor */
 BehavioralObject::~BehavioralObject() {
+    // TODO delete all components in the object 
 }
 
 /** adds a component to this game object */
 void BehavioralObject::addComponent(Component *component) {
     if (component->onAttach(this)) {
-        // TODO add to the components list 
+        mComponents.push_back(component);
     }
+}
+
+
+/** Returns the first available component matching the given type */
+Component *BehavioralObject::getComponent(long long int type) {
+    
+    ComponentsListIterator end = mComponents.end();
+    for (ComponentsListIterator it = mComponents.begin(); it != end; ++it) {
+        if (((*it)->getType() & type) == type) {
+            return (*it); 
+        }
+    }
+    
+    return NULL; 
 }
 
 /**

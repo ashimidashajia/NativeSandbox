@@ -11,10 +11,11 @@
 
 #include "Component.h"
 #include "BehaviorEngine.h"
+#include "../utils/Lists.h"
 
-// Double include loop 
 class BehaviorEngine;
 class Component;
+
 
 /**
  * The BehavioralObject class represents an object which as (at least one of) : 
@@ -35,12 +36,15 @@ public:
     
     /** adds a component to this game object */
     void addComponent(Component *component);
+    
+    /** Returns the first available component matching the given type */
+    Component *getComponent(long long int type);
 
 private:
 
     BehaviorEngine *mEngine; 
 
-    // List of components
+    ComponentsList mComponents; 
 };
 
 #endif

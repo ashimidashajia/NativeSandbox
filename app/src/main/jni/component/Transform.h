@@ -25,6 +25,11 @@ public:
     /** Destructor */
     ~Transform();
     
+    /**
+     * Returns a unique value to identify the component's type 
+     */
+    long long int getType();
+    
     /** 
      * Sets the orientation of the current transform. The right vector is inferred from the other 
      * two vectors to make sure the matrix is consistent

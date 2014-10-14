@@ -11,6 +11,10 @@
 
 #include "Environment.h"
 
+/* Component Type Implementations */
+#define T_SHAPE_3D    T_RENDERABLE | 0x01
+#define T_SHAPE_2D    T_RENDERABLE | 0x02
+
 /**
  * A Renderable component makes an object renderable
  */
@@ -31,6 +35,7 @@ public:
      * Renders the object
      */
     virtual void render(Environment *env) = 0;
+    
 
 protected:
 

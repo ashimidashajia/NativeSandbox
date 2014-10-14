@@ -12,7 +12,13 @@
 #include "BehavioralObject.h"
 #include "../core/TimeManager.h"
 
-// Double include loop
+
+/* TYPES :  32 bits values : [24b type flag][8b implementation value]*/
+#define T_RENDERABLE          0x00001000
+#define T_CAMERA              0x00002000
+#define T_TRANSFORM           0x00004000
+
+
 class BehavioralObject;
 
 /**
@@ -33,6 +39,11 @@ public:
      * can be attached (component can only be attached once).
      */
     bool onAttach(BehavioralObject *object);
+    
+    /**
+     * Returns a unique value to identify the component's type 
+     */
+    virtual long long int getType() = 0;
     
     /**
      * Called when this component is attached to an object. The parent object is accesible in the 
@@ -75,5 +86,6 @@ protected:
     /** the parent of this component */
     BehavioralObject *mObject;
 };
+
 
 #endif

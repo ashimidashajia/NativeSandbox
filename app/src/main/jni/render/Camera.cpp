@@ -7,10 +7,12 @@
 
 #include "Camera.h"
 #include "../math/Matrix.h"
+#include "../utils/Logs.h"
+
 #include <GLES2/gl2.h>
 #include <math.h>
 
-#include "../utils/Logs.h"
+
 
 #define TAG "Camera"
 
@@ -60,6 +62,7 @@ void Camera::setUniformValues(Shader *shader) {
 }
 
 /**
+ * Called before a frame is rendered
  */
 void Camera::onPreRender() {
     LogD(TAG, " ❯ Camera::onPreRender()");
@@ -80,4 +83,12 @@ void Camera::onPreRender() {
     multiplyMatrices(mViewProjMatrix, 0, mProjMatrix, 0, mInvertViewMatrix, 0); 
     LogD(TAG, "   • ViewProjection Matrix");
     logMatrix(mViewProjMatrix, 0); 
+}
+
+
+/**
+ * Returns a unique value to identify the component's type 
+ */
+long long int Camera::getType() {
+    return T_CAMERA;
 }

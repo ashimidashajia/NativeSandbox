@@ -52,6 +52,14 @@ LOCAL_MODULE    := nativesandbox
 LOCAL_LDLIBS    := -landroid -llog -lEGL -lGLESv2
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
 
+# C++ features support (C++ exceptions, RTTI and STL classes)
+# stlport_static and gnustl_static both provides the same features
+# gnustl is under the GPLv3 license
+APP_STL := stlport_static
+
+# enable exceptions
+LOCAL_CPP_FEATURES := rtti exceptions
+
 # Version dependant configuration
 ifeq ($(APP_OPTIM),release)
     # Release version optimisation : hide symbols
