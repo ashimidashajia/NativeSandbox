@@ -11,6 +11,7 @@
 
 #include "BehavioralObject.h"
 #include "../core/TimeManager.h"
+#include "../utils/Lists.h"
 
 #include <stdint.h>
 #include <android_native_app_glue.h>
@@ -34,11 +35,25 @@ public:
     /** Destructor */
     ~BehaviorEngine();
     
+    /**
+     * Adds an object to the engine
+     */
+    void addObject(BehavioralObject *object);
     
     /**
-     * Method to clean up everything at the start of a new frame
+     * Removes an object from the engine
      */
-    void startFrame();
+    void removeObject(BehavioralObject *object);
+    
+    /**
+     * Adds a component to the engine
+     */
+    void addComponent(Component *object);
+    
+    /**
+     * Removes a component from the engine
+     */
+    void removeComponent(Component *object);
 
     /**
      * Method to update the whole behavioral state
@@ -55,13 +70,54 @@ public:
      */
     void postRender();
     
+    /**
+     * Returns an iterator on renderables
+     */
+    RenderablesListConstIterator getRenderablesIterator();
+    
+    /**
+     * Returns the last renderable to iterate on
+     */
+    RenderablesListConstIterator getRenderablesEnd();
+    
 private :
 
-    /** list of behavioral objects ? */
-    // List<BehavioralObject> mObjects ??;
+    /**
+     * Update the various lists inside the behavior engine
+     */
+    void updateInternalState();
+    
+    /**
+     * Update the BehavioralObject lists
+     */
+    void updateInternalObjects();
+    
+    /**
+     * Update the Component lists
+     */
+    void updateInternalComponents();
+    
+    // TODO replace lists by sets
+
+    /** List of behavioral objects */
+    BehavioralObjectsList mObjects ;
+    /** List of behavioral objects to be added at the beginning of next frame */
+    BehavioralObjectsList mObjectsToBeAdded;
+    /** List of behavioral objects to be removed at the beginning of next frame */
+    BehavioralObjectsList mObjectsToBeRemoved;
     
     /** List of components */
-    // List<Component> mComponents;
+    ComponentsList mComponents;
+    /** List of Renderables (subset of mComponents) */
+    RenderablesList mRenderables;
+    
+    /** List of components to be added at the beginning of next frame */
+    ComponentsList mComponentsToBeAdded;
+    /** List of components to be removed at the beginning of next frame */
+    ComponentsList mComponentsToBeRemoved;
+    
+    /** Is the current scene being loaded */
+    bool mIsLoading;
 
 };
 

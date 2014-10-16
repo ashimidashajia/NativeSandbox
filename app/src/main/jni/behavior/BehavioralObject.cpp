@@ -6,6 +6,9 @@
  */
  
 #include "BehavioralObject.h"
+#include "../utils/Logs.h"
+
+#define TAG     "BehavioralObject"
 
 
 /** Constructor */
@@ -15,6 +18,27 @@ BehavioralObject::BehavioralObject() {
 /** Destructor */
 BehavioralObject::~BehavioralObject() {
     // TODO delete all components in the object 
+}
+
+
+/**
+ * Called when this object is attached to the engine
+ */
+void BehavioralObject::onAttach(BehaviorEngine *engine) {
+    ComponentsListConstIterator end = mComponents.end(); 
+    for (ComponentsListConstIterator it = mComponents.begin(); it != end; ++it) {
+        engine->addComponent((*it)); 
+    }
+}
+
+/**
+ * Called when this object is detached to the engine
+ */
+void BehavioralObject::onDetach(BehaviorEngine *engine) {
+    ComponentsListConstIterator end = mComponents.end(); 
+    for (ComponentsListConstIterator it = mComponents.begin(); it != end; ++it) {
+        engine->removeComponent((*it)); 
+    }
 }
 
 /** adds a component to this game object */
@@ -28,8 +52,8 @@ void BehavioralObject::addComponent(Component *component) {
 /** Returns the first available component matching the given type */
 Component *BehavioralObject::getComponent(long long int type) {
     
-    ComponentsListIterator end = mComponents.end();
-    for (ComponentsListIterator it = mComponents.begin(); it != end; ++it) {
+    ComponentsListConstIterator end = mComponents.end();
+    for (ComponentsListConstIterator it = mComponents.begin(); it != end; ++it) {
         if (((*it)->getType() & type) == type) {
             return (*it); 
         }
@@ -38,15 +62,3 @@ Component *BehavioralObject::getComponent(long long int type) {
     return NULL; 
 }
 
-/**
- * Triggered when this component is attached to an object. Must return true if this component
- * can be attached (component can only be attached once).
- */
-bool Component::onAttach(BehavioralObject *object) {
-     if (mObject){
-         return false;
-     }
-     
-     mObject = object; 
-     onAttached();
-}

@@ -16,6 +16,7 @@ Model::Model() {
     mGeometry = new Geometry();
 
     mTransform = NULL; 
+    mInitialized = false;
 }
 
 /** Destructor */
@@ -36,6 +37,16 @@ Model::~Model() {
  */
 void Model::onAttached(){
     mTransform = dynamic_cast<Transform *>(mObject->getComponent(T_TRANSFORM)); 
+}
+
+/**
+ * Called before a step is processed. 
+ */
+void Model::onPreProcess() {
+    if (! mInitialized){
+        init();
+        mInitialized = true;
+    }
 }
 
 /**
@@ -72,6 +83,8 @@ bool Model::initGeometry(GLfloat *vertices, int vtxCount, unsigned short vtxMask
     return true;
 }
 
+
+
 /** 
  * Renders the object
  */
@@ -89,6 +102,12 @@ void Model::render(Environment *env) {
         return; 
     }
     
+    // check we have a transform, thus a model matrix
+    if (mTransform == NULL) {
+        LogV(TAG, "   • Null transform ");
+        return; 
+    }
+    
     // set the shader active
     LogV(TAG, "   • Set shader active");
     mShader->setActive();
@@ -98,10 +117,9 @@ void Model::render(Environment *env) {
     env->setUniformValues(mShader);
     
     // set uniform values 
-    if (mTransform != NULL) {
-        LogV(TAG, "   • Set transform uniform values");
-        glUniformMatrix4fv(mShader->getModelMatrixUniformHandle(), 1, false, mTransform->getMatrix());
-    }
+    LogV(TAG, "   • Set transform uniform values");
+    glUniformMatrix4fv(mShader->getModelMatrixUniformHandle(), 1, false, mTransform->getMatrix());
+
 
     // draw the geometry
     LogV(TAG, "   • Draw geometry");

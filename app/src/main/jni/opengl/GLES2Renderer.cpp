@@ -20,7 +20,6 @@ GLES2Renderer::GLES2Renderer() {
     
     mModel = new Square();
     mCamera = new Camera();
-    
     mEnvironment = new Environment(); 
     
 }
@@ -48,16 +47,13 @@ bool GLES2Renderer::init(int width, int height)  {
     mEnvironment->setDisplaySize(width, height);
     mEnvironment->setActiveCamera(mCamera);
 
-    // TODO foreach renderable  : renderable.init
-    mModel->init();
-
     return true;
 }
 
 /**
  * Draws a single frame
  */
-void GLES2Renderer::drawFrame() {
+void GLES2Renderer::drawFrame(RenderablesListConstIterator it, RenderablesListConstIterator end) {
 
     // Clears the screen
     glClearColor(0.1f, 0.5f, 0.9f, 1.0f);
@@ -65,8 +61,12 @@ void GLES2Renderer::drawFrame() {
     
     mCamera->onPreRender();
 
-    // TODO foreach renderable : renderable.draw  
-    mModel->render(mEnvironment); 
+    // foreach renderable : renderable.render
+    LogD(TAG, "   • Renderables loop"); 
+    for (; it != end; ++it) {
+        LogD(TAG, "   • Rendering renderable (duh ...)"); 
+        (*it)->render(mEnvironment); 
+    }
 }
     
 

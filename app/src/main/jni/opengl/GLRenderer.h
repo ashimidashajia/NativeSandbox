@@ -8,6 +8,7 @@
 #ifndef GL_RENDERER_H
 #define GL_RENDERER_H
 
+#include "../utils/Lists.h"
 
 /**
  * The GLRenderer class is the link to the chosen OpenGL ES implementation (2.0 / 3.0), 
@@ -29,7 +30,7 @@ public:
     /**
      * Draws a single frame
      */
-    virtual void drawFrame() = 0;
+    virtual void drawFrame(RenderablesListConstIterator it, RenderablesListConstIterator end) = 0;
 
 protected:
 

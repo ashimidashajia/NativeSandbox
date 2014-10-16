@@ -29,12 +29,12 @@ public:
     /**
      * Initialises the renderer. Returns true if the initialisation was  succesfull
      */
-    virtual bool init(int width, int height) ;
+    bool init(int width, int height) ;
 
     /**
      * Draws a single frame
      */
-    virtual void drawFrame();
+    void drawFrame(RenderablesListConstIterator it, RenderablesListConstIterator end);
 
 protected:
 

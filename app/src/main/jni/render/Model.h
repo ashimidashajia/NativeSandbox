@@ -29,22 +29,26 @@ public:
     /** Destructor */
     ~Model();
     
-    
     /**
-     * Initializes the object
+     * Initializes the model
      */
     virtual void init() = 0;
     
     /**
      * Renders the object
      */
-    virtual void render(Environment *env);
+    void render(Environment *env);
     
     /**
      * Called when this component is attached to an object. The parent object is accesible in the 
      * mObject field from now on. 
      */
-    virtual void onAttached();
+    void onAttached();
+    
+    /**
+     * Called before a step is processed. 
+     */
+    void onPreProcess();
     
     
 protected:
@@ -68,6 +72,8 @@ protected:
     long long int getType();
 
 private:
+
+    bool mInitialized;
 
     /** the Transform */
     Transform *mTransform;

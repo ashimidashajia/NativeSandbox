@@ -14,11 +14,16 @@
 using namespace std;
 
 class Component;
+class Renderable;
 class BehavioralObject;
 
 typedef list<Component *>                           ComponentsList;
 typedef list<Component *>::iterator                 ComponentsListIterator;
 typedef list<Component *>::const_iterator           ComponentsListConstIterator;
+
+typedef list<Renderable *>                          RenderablesList;
+typedef list<Renderable *>::iterator                RenderablesListIterator;
+typedef list<Renderable *>::const_iterator          RenderablesListConstIterator;
 
 typedef list<BehavioralObject *>                    BehavioralObjectsList;
 typedef list<BehavioralObject *>::iterator          BehavioralObjectsListIterator;

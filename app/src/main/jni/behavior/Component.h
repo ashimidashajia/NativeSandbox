@@ -18,6 +18,7 @@
 #define T_CAMERA              0x00002000
 #define T_TRANSFORM           0x00004000
 
+#define T_USER                0x80000000
 
 class BehavioralObject;
 
@@ -39,6 +40,11 @@ public:
      * can be attached (component can only be attached once).
      */
     bool onAttach(BehavioralObject *object);
+    
+    /**
+     * Returns if this component is active and should be used 
+     */
+    bool isActive();
     
     /**
      * Returns a unique value to identify the component's type 
@@ -80,12 +86,22 @@ public:
      * Called after a frame was rendered
      */
     virtual void on_post_render() {}
-
+    
 protected:
 
     /** the parent of this component */
     BehavioralObject *mObject;
+    
+private:
+    
+    /** set this component as active */
+    bool mActive; 
 };
 
+
+/**
+ * Components sort by priority : returns true if lhs < rhs
+ */
+bool PrioritySortPredicate(Component *lhs, Component *rhs);
 
 #endif

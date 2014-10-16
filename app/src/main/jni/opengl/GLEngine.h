@@ -9,6 +9,7 @@
 #define GL_ENGINE_H
 
 #include "GLRenderer.h"
+#include "../utils/Lists.h"
 
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
@@ -43,9 +44,16 @@ public:
     /**
      * Renders a single frame on the current display
      */
-    void drawFrame();
+    void drawFrame(RenderablesListConstIterator it, RenderablesListConstIterator end);
+    
+    /**
+     * Is the engine initialised
+     */
+    bool isInitialized();
 
 private :
+
+    bool mInitialized;
 
     /** The Open GL Renderer */
     GLRenderer *mRenderer;

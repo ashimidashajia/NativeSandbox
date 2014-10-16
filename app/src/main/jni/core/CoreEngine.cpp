@@ -39,7 +39,8 @@ void CoreEngine::handleAppCommand(struct android_app *app, int32_t command) {
             // The window is being initialised, set it up
             if (app->window != NULL) {
                 mGLEngine->initDisplay(app->window);
-                mGLEngine->drawFrame();
+                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             }
             break;
 
@@ -187,30 +188,35 @@ void CoreEngine::mainLoop(struct android_app *app) {
 
     // Main application loop
     while (1) {
-        LogV(TAG, "   • Main loop");
-
+        LogV(TAG, " ❯ Main Loop");
+        
         // 
         loopStartTime = mTimeManager->getTimeNano();
         framesSkipped = 0;
 
         // 1 : handle external events (input, app lifecycle)
+        LogV(TAG, " ⟡ Handle inputs");
         pollLooperEvents(app);
 
         // 2 : check if the app needs to be destroyed
         if (app->destroyRequested != 0) {
-            LogI(TAG, "   • Destroy requested");
+            LogI(TAG, " ⟡ Destroy requested");
             // exit all loops
             return;
         }
 
-        // 3 : update system
-        mBehaviorEngine->updateState(mTimeManager->getDeltaTimeNano());
+        if (mGLEngine->isInitialized()) {
+            // 3 : update system
+            LogV(TAG, " ⟡ update system state");
+            mBehaviorEngine->updateState(mTimeManager->getDeltaTimeNano());
 
 
-        // 4 : update rendering
-        mBehaviorEngine->preRender();
-        mGLEngine->drawFrame();
-        mBehaviorEngine->postRender();
+            // 4 : update rendering
+            LogV(TAG, " ⟡ Render");
+            mBehaviorEngine->preRender();
+            mGLEngine->drawFrame(mBehaviorEngine->getRenderablesIterator(), mBehaviorEngine->getRenderablesEnd());
+            mBehaviorEngine->postRender();
+        }
 
         // 5 : Compute the sleep time
         initialStepTime = mTimeManager->getTimeNano() - loopStartTime;
@@ -218,6 +224,7 @@ void CoreEngine::mainLoop(struct android_app *app) {
 
         // 6a : sleep time is positive, we're ahead of schedule
         if (sleepTime.tv_nsec >= 0) {
+            LogV(TAG, " ⟡ Sleep %ld ", sleepTime.tv_nsec);
             nanosleep(&sleepTime, (struct timespec *) NULL);
         }
 
@@ -225,8 +232,8 @@ void CoreEngine::mainLoop(struct android_app *app) {
         // we'll force as many updates as the number of frames we missed (supposedly)
         // but will only catch up as much as MAX_FRAME_SKIPPED frames
         while ((sleepTime.tv_nsec < 0) && (framesSkipped < MAX_FRAME_SKIPPED)) {
-            LogD(TAG, "   • Catching up on missed frames");
-
+            
+            LogV(TAG, " ⟡ Catching up on missed frames");
             mBehaviorEngine->updateState(mTimeManager->getDeltaTimeNano());
 
             // add frame period to check if we get to thein next frame

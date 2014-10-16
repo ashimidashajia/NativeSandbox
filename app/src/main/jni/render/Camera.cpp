@@ -31,7 +31,7 @@ Camera::Camera() {
     setMatrixIdentity(mInvertViewMatrix, 0); 
     
     LogD(TAG, "   • View Matrix (in constructor)");
-    setLookAtMatrix(getMatrix(),  0, 0, 0, -2, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    setLookAtMatrix(getMatrix(),  0, 0, 1, -5, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     logMatrix(getMatrix(), 0);  
 }
 

@@ -25,11 +25,6 @@ public:
     /** Destructor */
     ~Renderable() {
     }
-    
-    /**
-     * Initializes the object
-     */
-    virtual void init() = 0;
 
     /**
      * Renders the object

@@ -28,10 +28,19 @@ GLEngine::GLEngine() {
     mSurface = EGL_NO_SURFACE;
 
     mRenderer = NULL;
+    
+    mInitialized = false;
 }
 
 /** Destructor */
 GLEngine::~GLEngine() {
+}
+
+/**
+ * Is the engine initialised
+ */
+bool GLEngine::isInitialized() {
+    return mInitialized;
 }
 
 /**
@@ -150,6 +159,8 @@ void GLEngine::initDisplay(ANativeWindow *window) {
 
     // init the GL context
     initGLContext();
+    
+    mInitialized = true; 
 }
 
 /**
@@ -213,7 +224,7 @@ void GLEngine::terminateDisplay() {
 /**
  * Renders a single frame on the current display
  */
-void GLEngine::drawFrame() {
+void GLEngine::drawFrame(RenderablesListConstIterator it, RenderablesListConstIterator end) {
 
     LogD(TAG, " ❯ GLEngine::drawFrame()");
 
@@ -224,7 +235,7 @@ void GLEngine::drawFrame() {
 
     // make the renderer draw a frame 
     if (mRenderer) {
-        mRenderer->drawFrame();
+        mRenderer->drawFrame(it, end);
 
         // Swap the display and surface buffer
         if (!eglSwapBuffers(mDisplay, mSurface)) {

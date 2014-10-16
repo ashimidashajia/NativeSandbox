@@ -39,11 +39,22 @@ public:
     
     /** Returns the first available component matching the given type */
     Component *getComponent(long long int type);
+    
+    /**
+     * Called when this object is attached to the engine
+     */
+    void onAttach(BehaviorEngine *engine);
+    
+    /**
+     * Called when this object is detached to the engine
+     */
+    void onDetach(BehaviorEngine *engine);
 
 private:
 
     BehaviorEngine *mEngine; 
 
+    // TODO replace lists by sets
     ComponentsList mComponents; 
 };
 

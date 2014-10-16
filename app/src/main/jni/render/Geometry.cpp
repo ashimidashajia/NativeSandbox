@@ -111,13 +111,14 @@ void Geometry::drawGeometry(Shader *shader) {
     // Position 
     handle = shader->getPositionAttributeHandle();
     if ((mVtxMask & VTX_MASK_POSITION) && (handle >= 0)) {
-        //              TODO          v     Change this to a CONSTANT
         LogD(TAG, "   • Set position attribute");
         glEnableVertexAttribArray(handle);
+        //              TODO          v     Change this to a CONSTANT
         glVertexAttribPointer(handle, 3, GL_FLOAT, GL_FALSE, mVtxStride, (const GLvoid *) mVtxPositionOffset);
     } else {
         LogD(TAG, "   • No position");
         glDisableVertexAttribArray(handle);
+        return;
     }
 
     // TODO Normal, Tangents, Binormal, Texture Coordinates
