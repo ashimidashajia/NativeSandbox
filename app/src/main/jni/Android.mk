@@ -41,6 +41,7 @@ LOCAL_SRC_FILES += render/Environment.cpp
 
 LOCAL_SRC_FILES += behavior/BehaviorEngine.cpp
 LOCAL_SRC_FILES += behavior/BehavioralObject.cpp
+LOCAL_SRC_FILES += behavior/Component.cpp
 
 LOCAL_SRC_FILES += component/Transform.cpp
 
@@ -71,7 +72,26 @@ else
     LOCAL_CFLAGS += -DLOGCAT
 endif
 
-
+# Build scripts
 include $(BUILD_SHARED_LIBRARY)
-
 $(call import-module,android/native_app_glue)
+
+#####################################
+# UNIT TEST APP 
+
+include $(CLEAR_VARS)
+
+# configure the module
+LOCAL_PATH := $(TOP_LOCAL_PATH)
+LOCAL_MODULE := nativesandbox_unittest
+
+# setup the source files
+LOCAL_SRC_FILES := unit/unit_test.cpp
+
+# libs dependencies
+LOCAL_STATIC_LIBRARIES := googletest_main
+
+# Build scripts
+include $(BUILD_EXECUTABLE)
+$(call import-module,third_party/googletest)
+
