@@ -24,11 +24,11 @@ Camera::Camera() {
     mAspectRatio = 1.0f;
     
     mProjMatrix = ALLOCATE_MATRIX();
-    setMatrixIdentity(mProjMatrix, 0);
+    setIdentityMatrix(mProjMatrix, 0);
     mViewProjMatrix = ALLOCATE_MATRIX();
-    setMatrixIdentity(mViewProjMatrix, 0);
+    setIdentityMatrix(mViewProjMatrix, 0);
     mInvertViewMatrix = ALLOCATE_MATRIX();
-    setMatrixIdentity(mInvertViewMatrix, 0); 
+    setIdentityMatrix(mInvertViewMatrix, 0); 
     
     LogD(TAG, "   • View Matrix (in constructor)");
     setLookAtMatrix(getMatrix(),  0, 0, 1, -5, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);

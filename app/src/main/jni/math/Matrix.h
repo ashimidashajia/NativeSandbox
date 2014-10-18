@@ -46,6 +46,11 @@
  * v[offset + 3]
  */
  
+ /**
+ * Computes the length of a vector.
+ */
+float length(float x, float y, float z);
+ 
 /**
  * Logs the given matrix content
  */
@@ -59,7 +64,7 @@ void copyMatrix(float *copy, int copyOffset, const float *source, int sourceOffs
 /** 
  * Sets the given matrix to identity
  */
-void setMatrixIdentity(float *matrix, int offset);
+void setIdentityMatrix(float *matrix, int offset);
 
 /**
  * Transposes a 4 x 4 matrix. 
@@ -86,9 +91,13 @@ bool invertMatrix(float *inverted, int invertedOffset, const float *matrix, int 
 void multiplyMatrices(float* result, int resultOffset, const float* lhs, int lhsOffset, const float* rhs, int rhsOffset);
 
 /**
- * Translates matrix by x, y, and z in place. 
+ * Translates matrix by x, y, and z in place along the local axis
  */
-void translateMatrix(float *matrix, int offset, float x, float y, float z) ;
+void translateLocalMatrix(float *matrix, int offset, float x, float y, float z) ;
+/**
+ * Translates matrix by x, y, and z in place along the world axis
+ */
+void translateWorldMatrix(float *matrix, int offset, float x, float y, float z) ;
 
 
 /**
@@ -108,6 +117,11 @@ void setLookAtMatrix(float *lookAtMatrix, int lookAtOffset,
                 float upX, float upY, float upZ) ;
 
 /**
+ * Defines a matrix containing a rotation transformation by an angle a along an (x,y,z) axis
+ */
+void setRotateMatrix(float *rotateMatrix, int rotateOffset, float x, float y, float z, float a);
+
+/**
  * Computes the length of a vector.
  */
 inline float length(float x, float y, float z);
@@ -117,6 +131,11 @@ inline float length(float x, float y, float z);
  * Translates matrix by x, y, and z in place. 
  */
 void translateMatrix(float *matrix, int offset, float x, float y, float z);
+
+/**
+ * Rotates a matrix by angle a around the x,y,z axis
+ */
+void rotateMatrix(float *matrix, int offset, float x, float y, float z, float a);
 
 #endif
 

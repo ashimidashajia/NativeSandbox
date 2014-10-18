@@ -13,6 +13,7 @@
 typedef long long TimeUnit;
 
 #define SECOND_IN_NANO 1000000000LL
+#define NANO_TO_SEC (1.0f / 1000000000.0f)
 
 /**
  * A simple utility class used to compute times 

@@ -72,6 +72,7 @@ void GLEngine::initDisplay(ANativeWindow *window) {
             EGL_RED_SIZE, 8,
             EGL_DEPTH_SIZE, 24,
             EGL_STENCIL_SIZE, 8,
+            EGL_SAMPLES, 4, /* multisampling */
             EGL_NONE
     };
 

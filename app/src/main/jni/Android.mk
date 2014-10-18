@@ -44,6 +44,7 @@ LOCAL_SRC_FILES += behavior/BehavioralObject.cpp
 LOCAL_SRC_FILES += behavior/Component.cpp
 
 LOCAL_SRC_FILES += component/Transform.cpp
+LOCAL_SRC_FILES += component/Rotator.cpp
 
 # configure the module
 LOCAL_PATH := $(TOP_LOCAL_PATH)

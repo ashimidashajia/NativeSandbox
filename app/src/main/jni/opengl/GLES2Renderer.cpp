@@ -18,7 +18,6 @@
 /** Constructor */
 GLES2Renderer::GLES2Renderer() {
     
-    mModel = new Square();
     mCamera = new Camera();
     mEnvironment = new Environment(); 
     
@@ -26,7 +25,6 @@ GLES2Renderer::GLES2Renderer() {
 
 /** Destructor */
 GLES2Renderer::~GLES2Renderer() {
-    delete mModel;
     delete mEnvironment; 
     delete mCamera;
 }

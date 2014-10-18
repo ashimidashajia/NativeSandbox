@@ -14,6 +14,13 @@
 #define TAG "Matrix"
 
 /**
+ * Computes the length of a vector.
+ */
+float length(float x, float y, float z) {
+        return sqrtf((x * x) + (y * y) + (z * z));
+}
+
+/**
  * Logs the given matrix content
  */
 void logMatrix(float *matrix, int offset) {
@@ -34,7 +41,7 @@ void copyMatrix(float *copy, int copyOffset, const float *source, int sourceOffs
 /** 
  * Sets the given matrix to identity
  */
-void setMatrixIdentity(float *matrix, int offset) {
+void setIdentityMatrix(float *matrix, int offset) {
     for (int i=0 ; i<MATRIX_SIZE ; i++) {
         matrix[offset + i] = 0;
     }
@@ -267,16 +274,56 @@ void setLookAtMatrix(float *lookAtMatrix, int lookAtOffset,
     lookAtMatrix[lookAtOffset + 14] = 0.0f;
     lookAtMatrix[lookAtOffset + 15] = 1.0f;
 
-    translateMatrix(lookAtMatrix, lookAtOffset, -eyeX, -eyeY, -eyeZ);
+    translateLocalMatrix(lookAtMatrix, lookAtOffset, -eyeX, -eyeY, -eyeZ);
 }
 
 
 /**
- * Computes the length of a vector.
+ * Defines a matrix containing a rotation transformation by an angle a along an (x,y,z) axis
  */
-float length(float x, float y, float z) {
-        return sqrtf((x * x) + (y * y) + (z * z));
+void setRotateMatrix(float *rotateMatrix, int rotateOffset, float x, float y, float z, float a) {
+    
+    // Make sure we start at identity
+    setIdentityMatrix(rotateMatrix, rotateOffset);
+    
+    // compute sine and cosine values
+    float s = sinf(a);
+    float c = cosf(a);
+    
+    // check bad input
+    float len = length(x, y, z);
+    if (len == 0.0) {
+        return; 
+    }
+    
+    // Normalize the axis 
+    float nx, ny, nz;
+    float invertLength = 1.0f / len;
+    nx = x * invertLength;
+    ny = y * invertLength;
+    nz = z * invertLength;
+    
+    // compute usefull values 
+    float nc = 1.0f - c;
+    float xy = nx * ny;
+    float yz = ny * nz;
+    float zx = nz * nx;
+    float xs = nx * s;
+    float ys = ny * s;
+    float zs = nz * s;
+    
+    // set rotate values
+    rotateMatrix[rotateOffset +  0] = nx * nx * nc +  c;
+    rotateMatrix[rotateOffset +  4] = xy * nc - zs;
+    rotateMatrix[rotateOffset +  8] = zx * nc + ys;
+    rotateMatrix[rotateOffset +  1] = xy * nc + zs;
+    rotateMatrix[rotateOffset +  5] = ny * ny * nc +  c;
+    rotateMatrix[rotateOffset +  9] = yz * nc - xs;
+    rotateMatrix[rotateOffset +  2] = zx * nc - ys;
+    rotateMatrix[rotateOffset +  6] = yz * nc + xs;
+    rotateMatrix[rotateOffset + 10] = nz * nz * nc +  c;
 }
+
 
 /**
  * Multiplies two 4x4 matrices together and stores the result in a third 4x4
@@ -319,7 +366,7 @@ void multiplyMatrices(float* result, int resultOffset, const float* lhs, int lhs
 /**
  * Translates matrix by x, y, and z in place, along the local axis
  */
-void translateMatrix(float *matrix, int offset, float x, float y, float z) {
+void translateLocalMatrix(float *matrix, int offset, float x, float y, float z) {
     
     for (int i = 0 ; i < MATRIX_SIDE_LENGTH ; i++) {
         int mi = offset + i;
@@ -327,3 +374,27 @@ void translateMatrix(float *matrix, int offset, float x, float y, float z) {
     }
     
 }
+
+/**
+ * Translates matrix by x, y, and z in place, along the world axis
+ */
+void translateWorldMatrix(float *matrix, int offset, float x, float y, float z) {
+    matrix[offset + 12] += x;
+    matrix[offset + 13] += y;
+    matrix[offset + 14] += z;
+}
+
+/**
+ * Rotates a matrix by angle a around the x,y,z axis
+ */
+void rotateMatrix(float *matrix, int offset, float x, float y, float z, float a) {
+    
+    float *tempResult = ALLOCATE_MATRIX();
+    float *tempRotate = ALLOCATE_MATRIX();
+    
+    setRotateMatrix(tempRotate, 0, x, y, z, a);
+    multiplyMatrices(tempResult, 0, matrix, offset, tempRotate, 0);
+    copyMatrix(matrix, offset, tempResult, 0);
+}
+
+

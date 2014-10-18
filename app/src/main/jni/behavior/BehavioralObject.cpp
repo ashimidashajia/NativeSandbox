@@ -27,6 +27,7 @@ BehavioralObject::~BehavioralObject() {
 void BehavioralObject::onAttach(BehaviorEngine *engine) {
     ComponentsListConstIterator end = mComponents.end(); 
     for (ComponentsListConstIterator it = mComponents.begin(); it != end; ++it) {
+        LogV(TAG, "   • adding component to engine");
         engine->addComponent((*it)); 
     }
 }
@@ -45,6 +46,8 @@ void BehavioralObject::onDetach(BehaviorEngine *engine) {
 void BehavioralObject::addComponent(Component *component) {
     if (component->onAttach(this)) {
         mComponents.push_back(component);
+    } else {
+         LogV(TAG, "   • can't attach component : already attached to someone else");
     }
 }
 

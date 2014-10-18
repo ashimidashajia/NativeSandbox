@@ -40,6 +40,7 @@ public:
      * Rotates this transform on itself, arount the given axis, with the given angle 
      */
     void rotate(Vector *axis, float angle);
+    void rotate(float x, float y, float z, float angle);
     
     /**
      * Orbits around the given point along the given axis, with the given angle. 
@@ -61,8 +62,8 @@ public:
     /** 
      * Translates this transform
      */
-    void translate(Vector *pos);
-    void translate(float,float,float);
+    void translateLocal(Vector *pos);
+    void translateLocal(float,float,float);
     
     /**
      * Sets the absolute scale of the transform

@@ -11,6 +11,7 @@
 #include "../utils/Lists.h"
 #include "../utils/Logs.h"
 #include "../component/Transform.h"
+#include "../component/Rotator.h"
 #include "../render/Square.h"
 
 #define TAG  "BehaviorEngine"
@@ -22,6 +23,7 @@ BehaviorEngine::BehaviorEngine() {
     BehavioralObject *square = new BehavioralObject(); 
     square->addComponent(new Transform());
     square->addComponent(new Square());
+    square->addComponent(new Rotator());
     
     addObject(square);
 }

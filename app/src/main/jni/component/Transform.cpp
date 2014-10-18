@@ -11,7 +11,7 @@
 /** Constructor */
 Transform::Transform() {
     mMatrix  = ALLOCATE_MATRIX();
-    setMatrixIdentity(mMatrix, 0);     
+    setIdentityMatrix(mMatrix, 0);     
 }
 
 /** Destructor */
@@ -43,6 +43,10 @@ void Transform::setOrientation(Vector *dir, Vector *up) {} // TODO
  * Rotates this transform on itself, arount the given axis, with the given angle 
  */
 void Transform::rotate(Vector *axis, float angle) {} // TODO 
+void Transform::rotate(float x, float y, float z, float angle) {
+    rotateMatrix(mMatrix, 0, x, y, z, angle);
+    
+} 
 
 /**
  * Orbits around the given point along the given axis, with the given angle. 
@@ -62,13 +66,13 @@ void Transform::setPosition(Vector *pos) {} // TODO
 void Transform::setPosition(float x, float y, float z) {} // TODO 
 
 /** 
- * Translates this transform
+ * Translates this transform (in the local coordinates)
  */
-void Transform::translate(Vector *pos) {
-    translateMatrix(mMatrix, 0, pos->x(), pos->y(), pos->z());
+void Transform::translateLocal(Vector *pos) {
+    translateLocalMatrix(mMatrix, 0, pos->x(), pos->y(), pos->z());
 }
-void Transform::translate(float x, float y, float z) {
-    translateMatrix(mMatrix, 0, x, y, z);
+void Transform::translateLocal(float x, float y, float z) {
+    translateLocalMatrix(mMatrix, 0, x, y, z);
 }
 
 /**
